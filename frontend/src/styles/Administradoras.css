@@ -1,0 +1,55 @@
+.administradoras-container {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.lista-administradoras {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.admin-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    background-color: white;
+}
+
+.admin-logo {
+    max-width: 100px;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+.ver-tabelas-btn {
+    background-color: #28a745; /* Verde para ação */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.3s;
+    font-weight: bold;
+}
+
+.ver-tabelas-btn:hover {
+    background-color: #1e7e34;
+}
+
+.aviso-cotacao {
+    margin-top: 40px;
+    padding: 15px;
+    background-color: #d1ecf1;
+    border: 1px solid #bee5eb;
+    color: #0c5460;
+    border-radius: 5px;
+    text-align: center;
+}

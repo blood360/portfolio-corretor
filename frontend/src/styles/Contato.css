@@ -1,0 +1,61 @@
+.contato-container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.contato-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.contato-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 25px;
+    width: 300px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+}
+
+.contato-detalhe {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #333;
+    margin: 10px 0 20px;
+}
+
+.contato-btn {
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: opacity 0.3s;
+}
+
+.contato-btn:hover {
+    opacity: 0.8;
+}
+
+.whatsapp-btn {
+    background-color: #25d366; 
+    color: white;
+}
+
+.email-btn {
+    background-color: #007bff; 
+    color: white;
+}
+
+.mapa-btn {
+    background-color: #f0ad4e; 
+    color: white;
+    border: none;
+    cursor: pointer;
+}

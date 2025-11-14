@@ -1,0 +1,105 @@
+.cotacao-container {
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.cotacao-form {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.form-section {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.form-section legend {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #007bff;
+    padding: 0 10px;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #333;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box; 
+    transition: border-color 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.pessoa-detalhe {
+    border: 1px dashed #b0c4de;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    background-color: #f8faff;
+}
+
+.pessoa-detalhe h4 {
+    margin-top: 0;
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+.doenca-label {
+    font-weight: bold;
+    color: #dc3545; /* Cor vermelha para a doença */
+}
+
+textarea {
+    resize: vertical; 
+    min-height: 80px;
+}
+
+.submit-cotacao-btn {
+    background-color: #28a745; 
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.submit-cotacao-btn:hover {
+    background-color: #1e7e34;
+}
+
+/* Responsividade de formulário */
+@media (max-width: 600px) {
+    .form-section {
+        padding: 15px;
+    }
+}

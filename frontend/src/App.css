@@ -1,0 +1,59 @@
+/* ======================================= */
+/* 1. Reset Básico e Fontes */
+/* ======================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+}
+
+body {
+    background-color: #f4f7f9;
+    color: #333;
+}
+
+h1, h2, h3, h4 {
+    color: #004085;
+}
+
+/* ======================================= */
+/* 2. Estilo do Layout e Conteúdo Principal */
+/* ======================================= */
+
+/* A área principal do conteúdo */
+.conteudo {
+    margin-left: 270px;
+    padding: 20px;
+    transition: margin-left 0.3s ease-in-out;
+}
+
+.toggle-button-fixed {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* ======================================= */
+/* 3. Responsividade Geral */
+/* ======================================= */
+@media (max-width: 768px) {
+    .conteudo {
+        margin-left: 0;
+        padding-top: 60px;
+    }
+    
+    /* Move o botão toggle para o canto superior direito no mobile se preferir */
+    .toggle-button-fixed {
+        left: 20px; /* Mantendo na esquerda, mas pode ser ajustado */
+    }
+}

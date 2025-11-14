@@ -1,0 +1,217 @@
+.admin-container {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* --- Abas de Navegação --- */
+.admin-tabs {
+    display: flex;
+    gap: 10px;
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.admin-tab-btn {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-weight: bold;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.admin-tab-btn.active {
+    background-color: #ffffff;
+    color: #007bff;
+    border-color: #007bff;
+    border-bottom: 2px solid #ffffff; /* Esconde a linha de baixo */
+}
+
+.admin-content {
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 0 8px 8px 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Estilos de Formulário (Adicionar Atualização) --- */
+.admin-form-card, .admin-list-card {
+    padding: 15px;
+}
+
+.form-atualizacao label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.form-atualizacao input[type="text"],
+.form-atualizacao textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.admin-submit-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.admin-submit-btn:hover {
+    background-color: #1e7e34;
+}
+
+.status-message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+/* --- Estilos de Lista (Visualizar Cotações) --- */
+.cotacao-item {
+    border: 1px solid #b0c4de;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    background-color: #f8faff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.cotacao-item h5 {
+    color: #007bff;
+    border-bottom: 1px solid #007bff;
+    padding-bottom: 5px;
+}
+
+.vidas-detalhe {
+    margin-top: 10px;
+    border-left: 3px solid #dc3545;
+    padding-left: 10px;
+}
+
+.vidas-detalhe ul {
+    list-style: none;
+    padding: 0;
+    font-size: 0.9em;
+}
+
+.vidas-detalhe li {
+    margin-bottom: 3px;
+    color: #555;
+}
+
+.atender-btn, .refresh-btn {
+    background-color: #f0ad4e;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.atender-btn:hover, .refresh-btn:hover {
+    background-color: #ec971f;
+}
+
+.error-message {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* --- Estilos da Lista de Atualizações (VisualizarAtualizacoes.jsx) --- */
+.update-item {
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    background-color: #fcfcfc;
+}
+
+.update-item h5 {
+    color: #34495e;
+    margin-bottom: 5px;
+}
+
+.update-desc {
+    font-style: italic;
+    color: #666;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+}
+
+.update-meta {
+    font-size: 0.8em;
+    color: #95a5a6;
+    margin-bottom: 10px;
+}
+
+/* --- Botões de Ação --- */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.edit-btn {
+    background-color: #f39c12; /* Laranja */
+    color: white;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.delete-btn {
+    background-color: #e74c3c; /* Vermelho */
+    color: white;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* --- Formulário de Edição --- */
+.edit-form label {
+    font-weight: normal;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.edit-form textarea {
+    min-height: 60px;
+    resize: vertical;
+}
+
+.cancel-btn {
+    background-color: #bdc3c7;
+    color: #333;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.status-message-edit {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #2ecc71;
+}
