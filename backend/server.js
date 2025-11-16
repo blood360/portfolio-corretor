@@ -1,255 +1,157 @@
+// backend/server.js
 const express = require('express');
-const cors = require('cors');
-const sqlite3 = require('sqlite3');
 const path = require('path');
-const { error } = require('console');
-//CONFIGURAÇÃO DO EXPRESS
-const app = express();
+const cors = require('cors');
+const mongoose = require('mongoose');
+
+// Variáveis de Ambiente e Porta
 const PORT = process.env.PORT || 3001;
+// A URL de conexão do MongoDB Atlas será lida da variável de ambiente MONGODB_URI
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/corretor_db';
 
-///MIDLEWARES
-app.use(cors()); //PARA REQUISIÇÃO DO FRONTEND
-app.use(express.json()); //PARA O SERVIDOR LER O JSON
+const app = express();
 
-//##############################################
-//      CONFIGURAÇÃO DO BANCO DE DADOS
-//##############################################
-const dbDriver = sqlite3.verbose();
-// Garante que o DB fique na raiz do backend ou onde o serviço de deploy espera
-const dbPath = path.resolve(__dirname, 'corretor.db');
+// Configuração do CORS (para permitir comunicação local)
+app.use(cors());
 
-const db = new dbDriver.Database(dbPath, (err) => {
-    if (err) {
-        console.error('Erro ao abrir banco de dados: ' + err.message);
-    } else {
-        console.log('Banco de dados sqlite3 conectado em: ' + dbPath);
-
-        //CRIAÇÃO DAS TABELAS
-        db.run(`CREATE TABLE IF NOT EXISTS cotacoes (
-            id INTEGER PRIMARY KEY,
-            nome TEXT NOT NULL,
-            email TEXT NOT NULL,
-            telefone TEXT NOT NULL,
-            modalidade TEXT NOT NULL,
-            cidade TEXT NOT NULL,
-            bairro TEXT NOT NULL,
-            numPessoas INTEGER NOT NULL,
-            data_envio TEXT NOT NULL
-        )`);
-
-        db.run(`CREATE TABLE IF NOT EXISTS vidas (
-            id INTEGER PRIMARY KEY,
-            cotacao_id INTEGER NOT NULL,
-            idade INTEGER NOT NULL,
-            pre_existente TEXT NOT NULL,
-            doenca TEXT,
-            FOREIGN KEY (cotacao_id) REFERENCES cotacoes(id)
-        )`);
-
-        db.run(`CREATE TABLE IF NOT EXISTS atualizacoes (
-            id INTEGER PRIMARY KEY,
-            titulo TEXT NOT NULL,
-            descricao TEXT NOT NULL,
-            imagem TEXT NOT NULL,
-            data_publicacao TEXT NOT NULL
-        )`);
-
-        db.run(`CREATE TABLE IF NOT EXISTS atualizacoes (
-            id INTEGER PRIMARY KEY,
-            titulo TEXT NOT NULL,
-            descricao TEXT NOT NULL,
-            imagem TEXT NOT NULL,
-            data_publicacao TEXT NOT NULL
-         )`);
-
-        db.run(`CREATE TABLE IF NOT EXISTS administradoras (
-            id INTEGER PRIMARY KEY,
-            nome TEXT NOT NULL,
-            logo TEXT NOT NULL,
-            descricao TEXT NOT NULL,
-            tabelas_url TEXT
-        )`);
-    }
-});
+// Middleware para processar JSON e URLs
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 //##############################################
-//                 ROTAS DA API
+//          CONFIGURAÇÃO DO MONGOOSE
 //##############################################
-//teste simples
-app.get('/', (req, res) => {
-    res.json({message: 'Servidor Backend do corretor Adriano Santos está on PAPAI!'});
-});
 
-// Rota POST para salvar a solicitação de cotação
-app.post('/api/cotacoes', (req, res) => {
-    // ... (LÓGICA DO POST /api/cotacoes - MANTIDA IGUAL) ...
-    const { nome, email, telefone, modalidade, cidade, bairro, numPessoas, idades } = req.body;
-    if(!idades || idades.length === 0) {
-        return res.status(400).json({error: 'É necessário informar os dados de pelomenos uma vida.'});
-    }
-    const data_envio = new Date().toISOString();
-    const sqlCotacao = `INSERT INTO cotacoes (nome, email, telefone, modalidade, cidade, bairro, numPessoas, data_envio) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-    
-    db.run(sqlCotacao, [nome, email, telefone, modalidade, cidade, bairro, numPessoas, data_envio], function(err) {
-        if (err) {
-            console.error ('Erro ao salvar cotação principal:', err.message);
-            return res.status(500).json({error: 'Erro ao salvar cotação principal'});
-        }
-        const cotacaoId = this.lastID;
-        const sqlVida = `INSERT INTO vidas (cotacao_id, idade, pre_existente, doenca) VALUES(?, ?, ?, ?)`;
+mongoose.connect(MONGODB_URI)
+    .then(() => {
+        console.log('✅ Banco de dados MongoDB Atlas conectado com sucesso!');
+    })
+    .catch(err => {
+        console.error('❌ Erro de conexão com o MongoDB Atlas:', err);
+    });
 
-        idades.forEach(vida => {
-            db.run(sqlVida, [cotacaoId, vida.idade, vida.preExistente, vida.doenca || null], (err) => {
-                if (err) {
-                    console.error(`Erro ao salvar vida ${vida.id} para cotação ${cotacaoId}:`, err.message);
-                }
-            });
-        });
+//##############################################
+//          DEFINIÇÃO DOS ESQUEMAS (MODELS)
+//##############################################
 
-        res.status(201).json({ message: "Cotação salva com sucesso!", cotacaoId: cotacaoId });
-    });
-});
+// Esquema Comum (para todos os documentos)
+const defaultSchemaOptions = { 
+    timestamps: true // Adiciona createdAt e updatedAt
+};
 
-// ### Rota GET para buscar todas as cotações com detalhes das vidas ###
-app.get('/api/cotacoes', (req, res) => {
-    const sql = `
-        SELECT c.id AS cotacao_id, c.nome, c.email, c.telefone, c.modalidade, c.cidade, c.bairro, c.numPessoas, c.data_envio,
-               v.id AS vida_id, v.idade, v.pre_existente, v.doenca
-        FROM cotacoes c LEFT JOIN vidas v ON c.id = v.cotacao_id ORDER BY c.data_envio DESC
-    `;
-    db.all(sql, [], (err, rows) => {
-        if (err) {
-            console.error("ERRO GRAVE ao buscar cotações:", err.message);
-            return res.status(500).json({ error: 'Erro interno ao buscar cotações.', detail: err.message });
-        }
-        const cotacoesMap = {};
-        rows.forEach(row => {
-            const cotacao_id = row.cotacao_id;
-            if (!cotacoesMap[cotacao_id]) {
-                cotacoesMap[cotacao_id] = { id: row.cotacao_id, nome: row.nome, email: row.email, telefone: row.telefone, modalidade: row.modalidade, cidade: row.cidade, bairro: row.bairro, numPessoas: row.numPessoas, data_envio: row.data_envio, vidas: [] };
-            }
-            if (row.vida_id) {
-                cotacoesMap[cotacao_id].vidas.push({ id: row.vida_id, idade: row.idade, pre_existente: row.pre_existente, doenca: row.doenca });
-            }
+// 1. COTAÇÕES
+const CotacaoSchema = new mongoose.Schema({
+    nome: { type: String, required: true },
+    telefone: { type: String, required: true },
+    email: { type: String, required: false },
+    vidas: { type: Number, required: true },
+    plano_tipo: { type: String, required: true },
+    data_envio: { type: Date, default: Date.now },
+}, defaultSchemaOptions);
+const Cotacao = mongoose.model('Cotacao', CotacaoSchema);
+
+// 2. VIDAS (Não possui rotas CRUD no projeto atual, mas mantemos o esquema)
+const VidaSchema = new mongoose.Schema({
+    nome: { type: String, required: true },
+    idade: { type: Number, required: true },
+}, defaultSchemaOptions);
+const Vida = mongoose.model('Vida', VidaSchema);
+
+// 3. ATUALIZAÇÕES / NOVIDADES
+const AtualizacaoSchema = new mongoose.Schema({
+    titulo: { type: String, required: true },
+    descricao: { type: String, required: true },
+    imagem: { type: String, required: true },
+    data_publicacao: { type: Date, default: Date.now },
+}, defaultSchemaOptions);
+const Atualizacao = mongoose.model('Atualizacao', AtualizacaoSchema);
+
+// 4. ADMINISTRADORAS
+const AdministradoraSchema = new mongoose.Schema({
+    nome: { type: String, required: true },
+    logo: { type: String, required: true },
+    descricao: { type: String, required: true },
+    tabelas_url: { type: String, required: false },
+}, defaultSchemaOptions);
+const Administradora = mongoose.model('Administradora', AdministradoraSchema);
+
+
+//##############################################
+//          ROTAS DA API (Mongoose)
+//##############################################
+
+// ### ROTA POST: NOVA COTAÇÃO (SUBSTITUI O DB.RUN DO SQLITE) ###
+app.post('/api/cotacoes', async (req, res) => {
+    try {
+        const novaCotacao = new Cotacao(req.body);
+        const cotacaoSalva = await novaCotacao.save();
+        res.status(201).json({ 
+            message: 'Cotação enviada e salva no MongoDB com sucesso!', 
+            data: cotacaoSalva 
         });
-        res.json(Object.values(cotacoesMap));
-    });
-});
-
-// ### Rota GET para buscar atualizações ###
-app.get('/api/atualizacoes', (req, res) => {
-    const sql = "SELECT id, titulo, descricao, imagem, data_publicacao FROM atualizacoes ORDER BY data_publicacao DESC";
-    db.all(sql, [], (err, rows) => {
-        if (err) {
-            console.error("erro ao buscar atualizações:", err.message);
-            return res.status(500).json({error: "Erro ao buscar as atualizações do banco de dados."});
-        }
-        res.json(rows);
-    });
-});
-
-// ### Rota para buscar todas as administradoras ###
-app.get('/api/administradoras', (req, res) => {
-    const sql = 'SELECT id, nome, logo, descricao, tabelas_url FROM administradoras ORDER BY nome ASC';
-    db.all(sql, [], (err, rows) => {
-        if (err) {
-            console.error('Erro ao buscar administradoras:', err.message);
-            return res.status(500).json({error: 'Erro ao buscar administradoras do banco de dados;'});
-        }
-        res.json(rows);
-    });
-});
-
-// ### Rota POST para adicionar atualização ###
-app.post('/api/atualizacoes', (req, res) => {
-    const { titulo, descricao, imagem } = req.body;
-    if (!titulo || !descricao || !imagem) {
-        return res.status(400).json({ error: 'Título, descrição e imagem são campos obrigatórios.' });
-    }
-    const data_publicacao = new Date().toISOString();
-    const sql = `INSERT INTO atualizacoes (titulo, descricao, imagem, data_publicacao) VALUES (?, ?, ?, ?)`;
-    db.run(sql, [titulo, descricao, imagem, data_publicacao], function(err) {
-        if (err) {
-            console.error("Erro ao inserir nova atualização:", err.message);
-            return res.status(500).json({ error: 'Erro ao salvar a atualização no banco de dados.' });
-        }
-        res.status(201).json({ message: 'Atualização adicionada com sucesso!', id: this.lastID });
-    });
-});
-
-// ### Rota PUT para editar atualização ###
-app.put('/api/atualizacoes/:id', (req, res) => {
-    const { id } = req.params;
-    const { titulo, descricao } = req.body;
-    if (!titulo || !descricao) {
-        return res.status(400).json({ error: 'Título e descrição são obrigatórios para a edição.' });
+    } catch (error) {
+        console.error("Erro ao salvar cotação no MongoDB:", error.message);
+        res.status(500).json({ error: "Erro ao salvar cotação no banco de dados." });
     }
-    const data_atualizacao = new Date().toISOString();
-    const sql = `UPDATE atualizacoes SET titulo = ?, descricao = ?, data_atualizacao = ? WHERE id = ?`;
-
-    db.run(sql, [titulo, descricao, data_atualizacao, id], function(err) {
-        if (err) {
-            console.error(`Erro ao editar atualização ID ${id}:`, err.message);
-            return res.status(500).json({ error: 'Erro ao editar a atualização.' });
-        }
-        if (this.changes > 0) {
-            res.json({ message: `Atualização ID ${id} editada com sucesso!` });
-        } else {
-            res.status(404).json({ error: `Atualização ID ${id} não encontrada.` });
-        }
-    });
 });
 
-// ### Rota DELETE para remover atualização ###
-app.delete('/api/atualizacoes/:id', (req, res) => {
-    const { id } = req.params;
-    const sql = `DELETE FROM atualizacoes WHERE id = ?`;
-
-    db.run(sql, id, function(err) {
-        if (err) {
-            console.error(`Erro ao deletar atualização ID ${id}:`, err.message);
-            return res.status(500).json({ error: 'Erro ao remover a atualização.' });
-        }
-        if (this.changes > 0) {
-            res.json({ message: `Atualização ID ${id} removida com sucesso!` });
-        } else {
-            res.status(404).json({ error: `Atualização ID ${id} não encontrada.` });
-        }
-    });
+// ### ROTA GET: BUSCAR COTAÇÕES (SUBSTITUI O DB.ALL DO SQLITE) ###
+app.get('/api/cotacoes', async (req, res) => {
+    try {
+        const cotacoes = await Cotacao.find().sort({ data_envio: -1 });
+        res.json(cotacoes);
+    } catch (error) {
+        console.error("Erro ao buscar cotações:", error.message);
+        res.status(500).json({ error: "Erro ao buscar cotações do banco de dados." });
+    }
 });
 
-// ### Rota DELETE para remover cotação ###
-app.delete('/api/cotacoes/:id', (req, res) => {
-    const { id } = req.params;
-
-    const sqlDeleteVidas = `DELETE FROM vidas WHERE cotacao_id = ?`;
-    db.run(sqlDeleteVidas, id, (err) => {
-        if (err) {
-            console.error(`Erro ao deletar vidas para cotação ID ${id}:`, err.message);
-        }
-        const sqlDeleteCotacao = `DELETE FROM cotacoes WHERE id = ?`;
-        db.run(sqlDeleteCotacao, id, function(err) {
-            if (err) {
-                console.error(`Erro ao deletar cotação ID ${id}:`, err.message);
-                return res.status(500).json({ error: 'Erro ao remover a cotação principal.' });
-            }
-            if (this.changes > 0) {
-                res.json({ message: `Cotação ID ${id} e vidas relacionadas removidas com sucesso!` });
-            } else {
-                res.status(404).json({ error: `Cotação ID ${id} não encontrada.` });
-            }
-        });
-    });
+// ### ROTA GET: BUSCAR ATUALIZAÇÕES (SUBSTITUI O DB.ALL DO SQLITE) ###
+app.get('/api/atualizacoes', async (req, res) => {
+    try {
+        // Busca 3 atualizações e ordena pela data mais recente
+        const atualizacoes = await Atualizacao.find().sort({ data_publicacao: -1 }).limit(3);
+        res.json(atualizacoes);
+    } catch (error) {
+        console.error("Erro ao buscar atualizações:", error.message);
+        res.status(500).json({ error: "Erro ao buscar atualizações do banco de dados." });
+    }
 });
+
+// ### ROTA GET: BUSCAR ADMINISTRADORAS (SUBSTITUI O DB.ALL DO SQLITE) ###
+app.get('/api/administradoras', async (req, res) => {
+    try {
+        const administradoras = await Administradora.find().sort({ nome: 1 });
+        res.json(administradoras);
+    } catch (error) {
+        console.error("Erro ao buscar administradoras:", error.message);
+        res.status(500).json({ error: "Erro ao buscar administradoras do banco de dados." });
+    }
+});
+
+// Rotas POST/PUT/DELETE para o ADMIN (atualizacoes e administradoras) seriam adicionadas aqui,
+// mas para o portfólio, mantemos apenas o GET para busca.
 
 
 //##############################################
 //      SERVINDO O FRONTEND (ESTÁTICOS)
 //##############################################
+
+// Configura o caminho para a pasta 'dist' (já corrigido para o deploy)
 const FRONTEND_DIR = path.join(__dirname, '..', 'frontend', 'dist');
+
+// Servir os arquivos estáticos
 app.use(express.static(FRONTEND_DIR));
-app.get('/*', (req, res) => {
-    res.sendFile(path.join(FRONTEND_DIR, 'index.html'));
+
+// Para qualquer rota que não seja da API, serve o index.html do React
+app.get('/*', (req, res) => { 
+    // Garante que a rota coringa funcione para o Express
+    if (!req.path.startsWith('/api')) {
+        res.sendFile(path.join(FRONTEND_DIR, 'index.html'));
+    } else {
+        // Se for /api, mas não foi encontrada acima (ex: /api/naoexiste), retorna 404.
+        res.status(404).json({ error: 'Endpoint da API não encontrado.' });
+    }
 });
 
 
@@ -257,9 +159,10 @@ app.get('/*', (req, res) => {
 //      INICIALIZAÇÃO DO SERVIDOR
 //##############################################
 app.listen(PORT, () => {
-    console.log(`Servidor brabo do Adriano rodando na porta ${PORT}`);
-    console.log(`Acesse: http://localhost:${PORT}`);
+    console.log(`Servidor brabo do Adriano rodando na porta ${PORT}`);
     if (process.env.PORT) {
         console.log(`(Em produção, a porta é ${process.env.PORT})`);
+    } else {
+        console.log(`Acesse localmente: http://localhost:${PORT}`);
     }
 });
