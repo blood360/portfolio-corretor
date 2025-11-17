@@ -6,7 +6,7 @@ const cors = require('cors');
 let cotacoesMock = [];
 let atualizacoesMock = [
     { id: 1, titulo: 'Novos Planos da Hapvida!', descricao: 'Tabelas 2026 já disponíveis. Consulte!', imagem: 'checkup.jpg', data_publicacao: new Date().toISOString() },
-    { id: 2, titulo: 'Dicas de Saúde', descricao: 'A importância de um check-up anual.', imagem: 'hospitalsaojose.jpg', data_publicacao: new Date().toISOString() },
+    {id: 2, titulo: 'FIQUE ATENTO', descricao: 'aos novos números de entrevistas médicas da Nova Saúde! confira no card!', imagem: 'fique_atento.jpeg', data_publicacao: new Date().toISOString()},
 ];
 
 const app = express();
