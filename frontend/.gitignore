@@ -15,7 +15,6 @@ lerna-debug.log*
 # 2. ARQUIVOS DE BUILD/CACHE
 /dist
 /dist-ssr
-/frontend/dist   # Garante que o dist do frontend seja ignorado
 /backend/dist    # Se por acaso o backend criar uma pasta dist
 .vite/
 
