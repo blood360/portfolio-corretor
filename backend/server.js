@@ -6,7 +6,7 @@ const cors = require('cors');
 let cotacoesMock = [];
 let atualizacoesMock = [
     { id: 1, titulo: 'Novos Planos da Hapvida!', descricao: 'Tabelas 2026 já disponíveis. Consulte!', imagem: 'checkup.jpg', data_publicacao: new Date().toISOString() },
-    {id: 2, titulo: 'FIQUE ATENTO', descricao: 'aos novos números de entrevistas médicas da Nova Saúde! confira no card!', imagem: 'fique_atento.jpeg', data_publicacao: new Date().toISOString()},
+    {id: 2, titulo: 'FIQUE ATENTO', descricao: 'aos novos números de entrevistas médicas da Nova Saúde! confira no card!', imagem: 'fique_atento.jpg', data_publicacao: new Date().toISOString()},
 ];
 
 const app = express();
@@ -52,7 +52,7 @@ app.get('/api/atualizacoes', (req, res) => {
 // ROTA GET: BUSCAR ADMINISTRADORAS (Retorna dados mockados)
 app.get('/api/administradoras', (req, res) => {
     const administradorasMock = [
-        { id: 1, nome: 'Amil', logo: 'logo_amil.png', descricao: 'Planos Nacionais.' },
+        { id: 1, nome: 'plano Adesão', logo: 'tabela_adesao.png', descricao: 'Confira os valores promocionais dos plano PF.' },
         { id: 2, nome: 'Bradesco Saúde', logo: 'logo_bradesco.png', descricao: 'Planos empresariais.' },
     ];
     res.json(administradorasMock);

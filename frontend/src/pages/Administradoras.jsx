@@ -10,7 +10,7 @@ const Administradoras = () => {
   useEffect(() => {
     const fetchAdmins = async () => {
         // Usando a URL relativa para funcionar em produção
-        const API_URL = '/api/administradoras'; 
+        const API_URL = '/api/administradoras';
         
         try {
             const response = await fetch(API_URL);

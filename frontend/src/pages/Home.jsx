@@ -31,11 +31,11 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      <h2>👋 Sejam Bem-Vindos à Corretora Arretada de Saúde!</h2>
+      <h2>👋 Sejam Bem-Vindos à Corretora Marins Beneficios!</h2>
       <p>
-        E aí, meu povo! Eu sou o Corretor Adriano Santos,
-        e meu trabalho é garantir a sua saúde e da sua família.
-        Com mais de 2 anos de experiência, trago o melhor plano que
+        Olá Eu sou o Corretor Adriano Santos,
+        e meu trabalho é garantir a melhor escolha de um plano para você, sua família ou Empresa.
+        Com mais de 2 anos de experiência, trago o melhor plano e com aquele preço que
         cabe no seu bolso e que atende suas necessidades.
         Meu negócio é clareza e honestidade.
       </p>
