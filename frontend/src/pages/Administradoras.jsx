@@ -40,7 +40,7 @@ const Administradoras = () => {
       <h2>📊 Administradoras e Tabelas de Planos</h2>
       <p>
         Aqui você encontra as tabelas mais atualizadas com preços, redes credenciadas e hospitais.
-        Como os valores mudam que nem o vento, **fale comigo no WhatsApp** para a cotação final, visse?
+        Como os valores mudam frequentemente, fale comigo no WhatsApp para a cotação final.
       </p>
 
       <div className="lista-administradoras">
@@ -65,7 +65,7 @@ const Administradoras = () => {
       </div>
       
       <p className="aviso-cotacao">
-        **Atenção:** Os dados acima são informativos. **Solicite uma Cotação** para um preço exato e personalizado!
+        <span>Atenção:</span> Os dados acima são informativos. **Solicite uma Cotação** para um preço exato e personalizado!
       </p>
     </div>
   );

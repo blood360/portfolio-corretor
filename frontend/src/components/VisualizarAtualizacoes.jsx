@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const API_URL_BASE = '/api/atualizacoes'; 
+const API_URL_BASE = '/api/atualizacoes';
 
 const VisualizarAtualizacoes = () => {
     const [updates, setUpdates] = useState([]);
@@ -14,7 +14,7 @@ const VisualizarAtualizacoes = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch(API_URL); 
+            const response = await fetch(API_URL_BASE);
             if (response.ok) {
                 const data = await response.json();
                 setUpdates(data);
@@ -22,7 +22,7 @@ const VisualizarAtualizacoes = () => {
                 setError(`Erro ao carregar updates. Status: ${response.status}`);
             }
         } catch (err) {
-            setError('Erro de conexão com o backend (porta 3001).');
+            setError('Erro de conexão com o backend. Verifique se o serviço Express está rodando.');
         } finally {
             setLoading(false);
         }
@@ -31,12 +31,12 @@ const VisualizarAtualizacoes = () => {
     // Função para deletar uma atualização
     const handleDelete = async (id) => {
         if (!window.confirm(`Tem certeza que deseja DELETAR a atualização ID ${id}?`)) {
-            return;
+            return;
         }
 
         try {
-            const response = await fetch(`${API_URL}/${id}`, {
-                method: 'DELETE',
+            const response = await fetch(`${API_URL_BASE}/${id}`, { 
+                method: 'DELETE',
             });
             if (response.ok) {
                 alert(`Atualização ID ${id} removida!`);
@@ -55,10 +55,10 @@ const VisualizarAtualizacoes = () => {
         setEditStatus('Salvando...');
 
         try {
-            const response = await fetch(`${API_URL}/${editId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(editData),
+            const response = await fetch(`${API_URL_BASE}/${editId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(editData),
             });
 
             if (response.ok) {

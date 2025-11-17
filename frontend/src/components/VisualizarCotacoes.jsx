@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const API_URL_BASE = 'http://localhost:3001/api/cotacoes'; 
+const API_URL_BASE = '/api/cotacoes';
 
 const VisualizarCotacoes = () => {
     const [cotacoes, setCotacoes] = useState([]);
@@ -23,14 +23,14 @@ const VisualizarCotacoes = () => {
                 setError(`Erro ao carregar dados do servidor. Status: ${response.status}`);
             }
         } catch (err) {
-            setError('Erro de conexão com o backend. Verifique a porta 3001.');
-            console.error("Erro de Rede ou Parse:", err);
-        } finally {
-            setLoading(false);
+            setError('Erro de conexão com o backend. Verifique se o serviço Express está rodando.');
+            console.error("Erro de Rede ou Parse:", err);
+        } finally {
+            setLoading(false);
         }
     };
 
-    // NOVO: Função para deletar uma cotação específica
+    // Função para deletar uma cotação específica
     const handleDelete = async (cotacaoId) => {
         // Confirmação antes de deletar
         if (!window.confirm(`Tem certeza que deseja DELETAR a cotação ID ${cotacaoId}? Esta ação é irreversível!`)) {
@@ -47,7 +47,7 @@ const VisualizarCotacoes = () => {
             if (response.ok) {
                 alert(`Cotação ID ${cotacaoId} deletada com sucesso!`);
                 // Depois de deletar, recarrega a lista para atualizar a tela
-                fetchCotacoes(); 
+                fetchCotacoes();
             } else {
                 const errorData = await response.json();
                 alert(`❌ Erro ao deletar: ${errorData.error || 'Erro desconhecido.'}`);
