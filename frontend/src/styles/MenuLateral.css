@@ -68,10 +68,10 @@
 }
 
 /* Responsividade para Mobile */
-@media (max-width: 769px) {
+@media (max-width: 768px) {
     /* No mobile, o menu lateral esconde por completo */
     .menu-lateral {
-        width: 80%;
+        width: 100%;
         transform: translateX(-100%); 
     }
 

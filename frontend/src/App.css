@@ -23,12 +23,24 @@ h1, h2, h3, h4 {
 
 /* A área principal do conteúdo */
 .conteudo {
-    margin-left: 270px;
+    /* REMOVIDO: margin-left fixo (agora será aplicado dinamicamente) */
     padding: 20px;
     transition: margin-left 0.3s ease-in-out;
 }
 
+/* Regra para quando o menu ESTÁ ABERTO (Aplica a margem de 270px) */
+.conteudo.menu-aberto {
+    margin-left: 270px; 
+}
+
+/* Regra para quando o menu ESTÁ FECHADO (Tela dividida) */
+.conteudo.menu-fechado {
+    /* Ocupa a tela toda quando o menu está fora */
+    margin-left: 0;
+}
+
 .toggle-button-fixed {
+    /* ... (mantido o estilo do botão) ... */
     position: fixed;
     top: 20px;
     left: 20px;
@@ -47,13 +59,13 @@ h1, h2, h3, h4 {
 /* 3. Responsividade Geral */
 /* ======================================= */
 @media (max-width: 768px) {
+    /* No mobile, a margem deve ser SEMPRE zero, pois o menu ocupa a tela toda */
     .conteudo {
-        margin-left: 0;
+        margin-left: 0 !important; /* !important garante que sobrescreve o .menu-aberto */
         padding-top: 60px;
     }
     
-    /* Move o botão toggle para o canto superior direito no mobile se preferir */
     .toggle-button-fixed {
-        left: 20px; /* Mantendo na esquerda, mas pode ser ajustado */
+        left: 20px;
     }
 }
