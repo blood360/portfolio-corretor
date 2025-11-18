@@ -2,14 +2,21 @@ import React from "react";
 import '../styles/CardAtualizacao.css';
 
 const CardAtualizacao = ({data}) => {
+    const handleClick = () => {
+        alert(`Detalhes da Notícia:\n\nTítulo: ${data.titulo}\n\nDescrição Completa: ${data.descrcicao}`);
+    };
+
     return (
         <div className="card-atualizacao">
-            <img src={`/images/${data.imagem}`} alt={data.titulo} className="card-imagem" />
-
             <div className="card-corpo">
-                <h4>{data.titulo}</h4>
-                <p>{data.descricao}</p>
-                <button className="ler-mais-btn">Ver detalhes</button>
+                <img
+                src={`/images/${data.imagem}`}
+                alt={data.titulo}
+                className="card-imagem"
+                />
+                <button onClick={handleClick} className="ler-mais-btn">
+                    Ver Detalhes
+                </button>
             </div>
         </div>
     );
