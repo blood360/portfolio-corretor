@@ -2,12 +2,17 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const fs = require('fs');
+
+// Para carregar variáveis de ambiente localmente em ambiente não produção
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
 
 // Variáveis de Ambiente e Porta
 const PORT = process.env.PORT || 3001;
 
-// A URL de conexão virá das variáveis de ambiente do Render
-// Se não tiver variável (local), tenta usar a string local, mas no Render vai usar a variável.
+// URI MongoDB (do Render ou .env local)
 const MONGODB_URI = process.env.MONGODB_URI;
 
 const app = express();
@@ -18,35 +23,49 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //##############################################
-//          CONFIGURAÇÃO DO MONGOOSE
+//          CONFIGURAÇÃO DO MONGOOSE
 //##############################################
 
-// Só tenta conectar se tiver a URI (no Render vai ter)
+// Conecta e só inicia o servidor se der certo
 if (MONGODB_URI) {
     mongoose.connect(MONGODB_URI)
-        .then(() => console.log('✅ MongoDB Atlas conectado com sucesso!'))
-        .catch(err => console.error('❌ Erro ao conectar no MongoDB:', err));
+        .then(() => {
+            console.log('✅ MongoDB Atlas conectado com sucesso!');
+
+            // Inicializar servidor só após conexão com sucesso
+            app.listen(PORT, () => {
+                console.log(`🔥 Servidor com MongoDB rodando na porta ${PORT}`);
+            });
+        })
+        .catch(err => {
+            console.error('❌ Erro ao conectar no MongoDB:', err);
+            process.exit(1); // Encerra app se não conectar ao banco
+        });
 } else {
     console.log('⚠️ MONGODB_URI não definida. O banco não conectará localmente sem ela.');
+
+    // Opcional: Inicia servidor mesmo sem banco, mas pode ter rotas mock ou limitações
+    app.listen(PORT, () => {
+        console.log(`🔥 Servidor rodando na porta ${PORT} (sem MongoDB)`);
+    });
 }
 
 //##############################################
-//          MODELOS (SCHEMAS)
+//          MODELOS (SCHEMAS)
 //##############################################
 
 const defaultOpts = { timestamps: true };
 
-// 1. COTAÇÕES
+// Schema Cotacao com validações básicas
 const CotacaoSchema = new mongoose.Schema({
-    nome: String,
-    email: String,
+    nome: { type: String, required: true },
+    email: { type: String, required: true },
     telefone: String,
     modalidade: String,
     cidade: String,
     bairro: String,
     numPessoas: Number,
     data_envio: { type: Date, default: Date.now },
-    // Vidas agora são um array de objetos dentro da cotação (mais fácil no Mongo)
     vidas: [{
         idade: String,
         pre_existente: String,
@@ -55,17 +74,16 @@ const CotacaoSchema = new mongoose.Schema({
 }, defaultOpts);
 const Cotacao = mongoose.model('Cotacao', CotacaoSchema);
 
-// 2. ATUALIZAÇÕES
+// Schema Atualizacao com validações básicas
 const AtualizacaoSchema = new mongoose.Schema({
-    titulo: String,
-    descricao: String,
+    titulo: { type: String, required: true },
+    descricao: { type: String, required: true },
     imagem: String,
     data_publicacao: { type: Date, default: Date.now },
 }, defaultOpts);
 const Atualizacao = mongoose.model('Atualizacao', AtualizacaoSchema);
 
-// 3. ADMINISTRADORAS (Vamos manter fixo por enquanto ou criar Model se quiser editar depois)
-// Para facilitar agora, vamos manter fixo, mas vindo da API.
+// Administradoras fixas (mock)
 const administradorasMock = [
     { id: 1, nome: 'Amil', logo: 'logo_amil.png', descricao: 'Planos Nacionais e Regionais.', tabelas_url: '' },
     { id: 2, nome: 'Bradesco Saúde', logo: 'logo_bradesco.png', descricao: 'Focado em planos empresariais.', tabelas_url: '' },
@@ -73,26 +91,29 @@ const administradorasMock = [
 ];
 
 //##############################################
-//          ROTAS DA API (COM MONGOOSE)
+//          ROTAS DA API (COM MONGOOSE)
 //##############################################
 
 // POST: NOVA COTAÇÃO
 app.post('/api/cotacoes', async (req, res) => {
     try {
-        // O frontend manda 'idades' como array, o Schema aceita 'vidas'. Vamos ajustar se precisar.
-        // Mas no seu frontend você manda 'idades', então vamos salvar como 'vidas' no banco.
         const { idades, ...resto } = req.body;
-        
+
+        // Validação básica simples
+        if (!resto.nome || !resto.email) {
+            return res.status(400).json({ error: "Campos nome e email são obrigatórios." });
+        }
+
         const novaCotacao = new Cotacao({
             ...resto,
-            vidas: idades // Mapeia idades do front para vidas do banco
+            vidas: Array.isArray(idades) ? idades : []
         });
 
         const salvo = await novaCotacao.save();
-        
-        res.status(201).json({ 
-            message: 'Cotação salva no MongoDB!', 
-            cotacaoId: salvo._id 
+
+        res.status(201).json({
+            message: 'Cotação salva no MongoDB!',
+            cotacaoId: salvo._id
         });
     } catch (error) {
         console.error("Erro Mongo:", error);
@@ -104,13 +125,13 @@ app.post('/api/cotacoes', async (req, res) => {
 app.get('/api/cotacoes', async (req, res) => {
     try {
         const lista = await Cotacao.find().sort({ data_envio: -1 });
-        // O frontend espera um array. O Mongo devolve array.
-        // O frontend espera 'id', o Mongo tem '_id'. O React lida bem, mas podemos mapear.
+
         const listaFormatada = lista.map(item => ({
             ...item._doc,
-            id: item._id, // Cria um campo 'id' igual ao '_id'
-            vidas: item.vidas // Já está aninhado
+            id: item._id,
+            vidas: item.vidas
         }));
+
         res.json(listaFormatada);
     } catch (error) {
         res.status(500).json({ error: "Erro ao buscar cotações." });
@@ -120,7 +141,8 @@ app.get('/api/cotacoes', async (req, res) => {
 // DELETE: APAGAR COTAÇÃO
 app.delete('/api/cotacoes/:id', async (req, res) => {
     try {
-        await Cotacao.findByIdAndDelete(req.params.id);
+        const deleted = await Cotacao.findByIdAndDelete(req.params.id);
+        if (!deleted) return res.status(404).json({ error: "Cotação não encontrada" });
         res.json({ message: 'Cotação deletada.' });
     } catch (error) {
         res.status(500).json({ error: "Erro ao deletar." });
@@ -162,7 +184,8 @@ app.put('/api/atualizacoes/:id', async (req, res) => {
 // DELETE: REMOVER ATUALIZAÇÃO
 app.delete('/api/atualizacoes/:id', async (req, res) => {
     try {
-        await Atualizacao.findByIdAndDelete(req.params.id);
+        const removed = await Atualizacao.findByIdAndDelete(req.params.id);
+        if (!removed) return res.status(404).json({ error: "Atualização não encontrada" });
         res.json({ message: 'Removido!' });
     } catch (error) {
         res.status(500).json({ error: "Erro ao remover." });
@@ -175,20 +198,20 @@ app.get('/api/administradoras', (req, res) => {
 });
 
 //##############################################
-//      SERVINDO O FRONTEND
+//      SERVINDO O FRONTEND (SPA)
 //##############################################
 const FRONTEND_DIR = path.join(__dirname, '..', 'frontend', 'dist');
-app.use(express.static(FRONTEND_DIR));
 
-app.get('/*', (req, res) => { 
+if (fs.existsSync(FRONTEND_DIR)) {
+    app.use(express.static(FRONTEND_DIR));
+} else {
+    console.warn('⚠️ Diretório frontend/dist não encontrado, está disponível para servir?');
+}
+
+app.get('/*', (req, res) => {
     if (!req.path.startsWith('/api')) {
         res.sendFile(path.join(FRONTEND_DIR, 'index.html'));
     } else {
         res.status(404).json({ error: 'API endpoint não encontrado' });
     }
-});
-
-// Inicialização
-app.listen(PORT, () => {
-    console.log(`🔥 Servidor com MongoDB rodando na porta ${PORT}`);
 });
