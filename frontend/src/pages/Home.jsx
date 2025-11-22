@@ -37,7 +37,7 @@ const Home = () => {
         e meu trabalho é garantir a melhor escolha de um plano para você, sua família ou Empresa.
         Com mais de 2 anos de experiência, trago o melhor plano e com aquele preço que
         cabe no seu bolso e que atende suas necessidades.
-        Meu negócio é clareza e honestidade.
+        Meu meu trabalho é clareza e honestidade.
       </p>
 
       <h3>🔥 Últimas Notícias e Atualizações</h3>
@@ -50,7 +50,7 @@ const Home = () => {
 
       <h3>Nossa Missão</h3>
       <p>
-        Prover tranquilidade e segurança, com planos que são **garantia de paz**.
+        Prover tranquilidade e segurança, com planos que são garantia de paz.
         Conte comigo pra fazer o melhor negócio!
       </p>
     </div>

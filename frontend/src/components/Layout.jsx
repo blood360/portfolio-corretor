@@ -7,38 +7,43 @@ import Cotacao from '../pages/Cotacao';
 import Contato from '../pages/Contato';
 import Footer from './Footer';
 import Admin from '../pages/Admin';
+import '../App.css'; // Garante que o CSS global está aqui
 
 const Layout = () => {
-    const [menuAberto, setMenuAberto] = useState(false);
-    //FUNCAO PARA MUDAR O ESTADO (ABRE E FECHA O MENU)
-    const toggleMenu = () => {
-        setMenuAberto(!menuAberto)
-    };
+    const [menuAberto, setMenuAberto] = useState(false);
+    
+    const toggleMenu = () => {
+        setMenuAberto(!menuAberto);
+    };
 
-    // Determina a classe dinâmica para o conteúdo principal
+    // Lógica da classe para empurrar o conteúdo
     const contentClass = `conteudo ${menuAberto ? 'menu-aberto' : 'menu-fechado'}`;
 
-    return (
-        <Router>
-            <button onClick={toggleMenu} className='toggle-button-fixed'>
-                {menuAberto ? 'X': '☰'}
-            </button>
+    return (
+        <Router>
+            {/* AQUI ESTÁ O SEGREDO: Uma div que envolve tudo */}
+            <div className="layout-container">
+                
+                <button onClick={toggleMenu} className='toggle-button-fixed'>
+                    {menuAberto ? 'X': '☰'}
+                </button>
 
-            <MenuLateral isOpen={menuAberto} toggleMenu={toggleMenu} />
+                <MenuLateral isOpen={menuAberto} toggleMenu={toggleMenu} />
 
-            <main className={contentClass}>
-                <Routes>
-                    <Route path='/' element={<Home />} />
-                    <Route path="/administradoras" element={<Administradoras />} />
-                    <Route path="/cotacao" element={<Cotacao />} />
-                    <Route path="/contato" element={<Contato />} />
-                    <Route path="/admin" element={<Admin />} />
-                </Routes>
-            </main>
+                <main className={contentClass}>
+                    <Routes>
+                        <Route path='/' element={<Home />} />
+                        <Route path="/administradoras" element={<Administradoras />} />
+                        <Route path="/cotacao" element={<Cotacao />} />
+                        <Route path="/contato" element={<Contato />} />
+                        <Route path="/admin" element={<Admin />} />
+                    </Routes>
+                </main>
 
-            <Footer />
-        </Router>
-    );
+                <Footer />
+            </div>
+        </Router>
+    );
 };
 
 export default Layout;
