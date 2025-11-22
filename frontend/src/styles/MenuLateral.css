@@ -70,12 +70,21 @@
 /* Responsividade para Mobile */
 @media (max-width: 768px) {
     .menu-lateral {
-        width: 100% !important;
+        width: 100vw !important; /* Força largura total da tela */
         height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        /* Garante que suma pra esquerda */
         transform: translateX(-100%); 
+        transition: transform 0.3s ease-in-out;
     }
 
     .menu-lateral.aberto {
         transform: translateX(0);
+    }
+
+    .menu-header .fechar-btn {
+        display: block;
     }
 }

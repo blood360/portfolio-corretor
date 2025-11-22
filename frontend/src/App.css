@@ -4,6 +4,8 @@
 html, body {
     height: 100%;
     margin: 0;
+    padding: 0;
+    overflow-x: hidden;
 }
 
 #root {
@@ -67,15 +69,22 @@ h1, h2, h3, h4 {
 /* ======================================= */
 /* 3. Responsividade Geral */
 /* ======================================= */
-@media (max-width: 768px) {
-    .conteudo {
-        margin-left: 0 !important; 
-        padding-top: 80px;
+@media (min-width: 769px) {
+    .conteudo.menu-aberto {
+        margin-left: 270px;
+        width: calc(100% - 270px);
+    }
+    .conteudo.menu-fechado {
+        margin-left: 0;
         width: 100%;
     }
-    
-    .toggle-button-fixed {
-        top: 15px;
-        left: 15px;
+}
+
+/* Ajuste para Mobile */
+@media (max-width: 768px) {
+    .conteudo {
+        margin-left: 0 !important;
+        padding-top: 80px;
+        width: 100%;
     }
 }

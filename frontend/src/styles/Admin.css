@@ -13,7 +13,8 @@
 }
 
 .admin-tab-btn {
-    background-color: #f0f0f0;
+    background-color: #e9ecef;
+    color: #495057;
     border: 1px solid #ddd;
     border-bottom: none;
     padding: 10px 15px;
@@ -21,14 +22,14 @@
     font-weight: bold;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
-    transition: background-color 0.2s;
+    transition: all 0.2s;
 }
 
 .admin-tab-btn.active {
-    background-color: #ffffff;
+    background-color: #dbe2ef;
     color: #007bff;
     border-color: #007bff;
-    border-bottom: 2px solid #ffffff; /* Esconde a linha de baixo */
+    border-bottom: 2px solid #ffffff;
 }
 
 .admin-content {
