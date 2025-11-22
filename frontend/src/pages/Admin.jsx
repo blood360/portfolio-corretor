@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import Tab from '../components/Tab'; 
+import Tab from '../components/Tab';
 import AdicionarAtualizacao from '../components/AdicionarAtualizacao';
 import VisualizarCotacoes from '../components/VisualizarCotacoes';
-import VisualizarAtualizacoes from '../components/VisualizarAtualizacoes'; 
+import VisualizarAtualizacoes from '../components/VisualizarAtualizacoes';
+// IMPORTANDO O NOVO COMPONENTE DE ADMINISTRADORAS
+import GerenciarAdministradoras from '../components/GerenciarAdministradoras';
 import '../styles/Admin.css';
 
 const Admin = () => {
-  // Estado para controlar qual aba está ativa (1 = Adicionar, 2 = Visualizar Updates, 3 = Cotações)
+  // Estado para controlar qual aba está ativa
   const [activeTab, setActiveTab] = useState(1);
 
   return (
@@ -30,12 +32,20 @@ const Admin = () => {
           isActive={activeTab === 3} 
           onClick={() => setActiveTab(3)} 
         />
+        {/* NOVA ABA AQUI 👇 */}
+        <Tab 
+          label="4. Gerenciar Administradoras" 
+          isActive={activeTab === 4} 
+          onClick={() => setActiveTab(4)} 
+        />
       </div>
       
       <div className="admin-content">
         {activeTab === 1 && <AdicionarAtualizacao />}
-        {activeTab === 2 && <VisualizarAtualizacoes />} {/* NOVO COMPONENTE AQUI */}
+        {activeTab === 2 && <VisualizarAtualizacoes />} 
         {activeTab === 3 && <VisualizarCotacoes />}
+        {/* RENDERIZAÇÃO DO NOVO COMPONENTE 👇 */}
+        {activeTab === 4 && <GerenciarAdministradoras />}
       </div>
     </div>
   );

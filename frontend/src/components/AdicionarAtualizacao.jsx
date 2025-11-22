@@ -4,17 +4,41 @@ const AdicionarAtualizacao = () => {
     const [formData, setFormData] = useState({
         titulo: '',
         descricao: '',
-        imagem: '',
+        imagem: '', // Agora vai guardar o código Base64 da imagem
     });
     const [status, setStatus] = useState('');
 
+    // Mantemos o handleChange para Título e Descrição
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    // NOVA FUNÇÃO: Converte o arquivo do computador para Base64 (Texto)
+    const handleImageChange = (e) => {
+        const file = e.target.files[0]; // Pega o primeiro arquivo selecionado
+        
+        if (file) {
+            // Verifica o tamanho (opcional, ex: limite de 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert("A imagem é muito grande! Escolha uma menor que 5MB.");
+                return;
+            }
+
+            const reader = new FileReader();
+            
+            // Quando terminar de ler o arquivo, salva no estado
+            reader.onloadend = () => {
+                setFormData({ ...formData, imagem: reader.result });
+            };
+            
+            // Começa a ler o arquivo como URL de dados
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setStatus('Enviando...');
+        setStatus('Enviando (aguarde, pode demorar um pouquinho por causa da imagem)...');
         
         const API_URL = '/api/atualizacoes'; 
 
@@ -29,15 +53,22 @@ const AdicionarAtualizacao = () => {
 
             if (response.ok) {
                 const result = await response.json();
-                setStatus(`✅ Atualização salva! ID: ${result.id}. Recarregue a Home para ver!`);
-                setFormData({ titulo: '', descricao: '', imagem: '' }); // Limpa o formulário
+                setStatus(`✅ Atualização salva! Recarregue a Home para ver!`);
+                
+                // Limpa o formulário
+                setFormData({ titulo: '', descricao: '', imagem: '' }); 
+                
+                // Limpa o campo de arquivo visualmente
+                const fileInput = document.getElementById('fileInput');
+                if(fileInput) fileInput.value = '';
+                
             } else {
                 const errorData = await response.json();
                 setStatus(`❌ Erro ao salvar: ${errorData.error || 'Erro no servidor.'}`);
             }
         } catch (error) {
             console.error('Erro de rede:', error);
-            setStatus('❌ Erro de conexão com o backend (porta 3001).');
+            setStatus('❌ Erro de conexão com o backend.');
         }
     };
 
@@ -52,8 +83,27 @@ const AdicionarAtualizacao = () => {
                 <label>Descrição:</label>
                 <textarea name="descricao" value={formData.descricao} onChange={handleChange} required />
                 
-                <label>Nome da Imagem (Ex: checkup.jpg):</label>
-                <input type="text" name="imagem" value={formData.imagem} onChange={handleChange} placeholder="O arquivo deve estar em public/images/" required />
+                {/* MUDANÇA AQUI: Input de Arquivo em vez de Texto */}
+                <label>Escolha a Imagem (Upload do PC/Celular):</label>
+                <input 
+                    id="fileInput"
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleImageChange} 
+                    required 
+                />
+                
+                {/* Mostra uma prévia da imagem se ela já foi carregada */}
+                {formData.imagem && (
+                    <div style={{marginTop: '15px', marginBottom: '15px', textAlign: 'center'}}>
+                        <p style={{fontSize: '0.9em', color: '#666'}}>Pré-visualização:</p>
+                        <img 
+                            src={formData.imagem} 
+                            alt="Preview" 
+                            style={{maxWidth: '100%', maxHeight: '200px', borderRadius: '8px', border: '1px solid #ddd'}} 
+                        />
+                    </div>
+                )}
                 
                 <button type="submit" className="admin-submit-btn">Salvar Atualização</button>
             </form>
