@@ -5,6 +5,8 @@
     padding-bottom: 10px;
     border-top: 5px solid #007bff;
     width: 100%;
+    position: relative;
+    margin-top: auto;
 }
 
 .footer-content {
