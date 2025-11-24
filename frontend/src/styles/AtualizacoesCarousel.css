@@ -1,54 +1,49 @@
 .carousel-container {
     position: relative;
-    margin: 30px auto;
-    max-width: 850px; 
-    text-align: center;
-    min-height: 450px; /* Garante que o container não "pule" durante a transição */
+    margin: 0 auto;
+    max-width: 350px;
+    width: 100%;
+    min-height: 480px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
 
-/* O item que contém o CardAtualizacao e será animado */
 .carousel-item {
-    transition: opacity 0.5s ease-in-out; /* O SEGREDO DO FADE */
-    position: absolute; 
+    transition: opacity 0.5s ease-in-out;
+    position: absolute;
     width: 100%;
     top: 0;
     left: 0;
+    
+    display: flex;
+    justify-content: center;
 }
 
-/* Estado Visível */
-.fade-in {
-    opacity: 1;
-}
+.fade-in { opacity: 1; z-index: 2; }
+.fade-out { opacity: 0; z-index: 1; }
 
-/* Estado Invisível */
-.fade-out {
-    opacity: 0;
-}
-
-/* Estilo para os indicadores (os pontinhos embaixo) */
 .carousel-indicators {
-    /* Posiciona os indicadores abaixo do card, já que o card é absolute */
     position: absolute;
-    bottom: -40px; 
+    bottom: 0px; 
     left: 50%;
     transform: translateX(-50%);
-    width: 100%;
-    margin-top: 20px;
+    display: flex;
+    gap: 8px;
+    padding-bottom: 10px;
 }
 
 .indicator {
     height: 10px;
     width: 10px;
-    margin: 0 5px;
-    background-color: #bbb;
+    background-color: #ccc;
     border: none;
     border-radius: 50%;
-    display: inline-block;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
+    transition: all 0.3s;
 }
 
 .indicator.active {
-    background-color: #007bff;
-    transform: scale(1.2); 
+    background-color: #0056b3;
+    transform: scale(1.2);
 }

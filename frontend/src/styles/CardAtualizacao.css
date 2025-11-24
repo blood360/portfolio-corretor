@@ -1,16 +1,17 @@
 .card-atualizacao {
     background-color: #ffffff;
-    border-radius: 15px; /* Cantos arredondados */
-    overflow: hidden; /* Garante que nada saia de dentro do card */
+    border-radius: 15px;
+    overflow: hidden;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
     transition: transform 0.3s ease;
     
-    /* TAMANHO FIXO DO CARD */
-    width: 300px; /* Largura fixa para o card não estourar */
-    flex-shrink: 0; /* Impede que o card seja esmagado no carrossel */
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    
     display: flex;
     flex-direction: column;
-    margin: 10px; /* Espacinho entre cards */
+    position: relative;
 }
 
 .card-atualizacao:hover {
@@ -18,9 +19,9 @@
 }
 
 .card-imagem {
-    width: 100%; /* A imagem ocupa 100% da largura DO CARD (300px) */
-    height: 180px; /* Altura fixa para todas ficarem iguais */
-    object-fit: cover; /* Corta o excesso para não esticar a foto */
+    width: 100%; 
+    height: 180px; 
+    object-fit: cover; 
     border-bottom: 1px solid #eee;
 }
 
@@ -28,7 +29,7 @@
     padding: 20px;
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+    text-align: left;
 }
 
 .card-corpo h4 {
@@ -36,27 +37,23 @@
     margin-top: 0;
     font-size: 1.1rem;
     margin-bottom: 10px;
+    line-height: 1.4;
 }
 
 .card-corpo p {
     font-size: 0.9rem;
     color: #666;
     margin-bottom: 15px;
-    flex-grow: 1;
 }
 
 .ler-mais-btn {
-    background-color: #00a86b; /* Verde */
+    background-color: #00a86b;
     color: white;
     border: none;
-    padding: 8px 15px;
-    border-radius: 20px;
+    padding: 10px 20px;
+    border-radius: 25px;
     cursor: pointer;
     font-weight: bold;
-    align-self: flex-start;
-    transition: background 0.2s;
-}
-
-.ler-mais-btn:hover {
-    background-color: #008f5b;
+    align-self: center; /* Botão centralizado no card */
+    width: 100%;
 }
