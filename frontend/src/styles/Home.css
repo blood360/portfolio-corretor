@@ -160,8 +160,15 @@
 
 .about-image img {
     width: 100%;
-    border-radius: 20px 0 20px 0; /* Canto arredondado estiloso */
+    max-width: 400px;
+    height: auto;
+    max-height: 400px;
+    object-fit: contain;
+    
+    border-radius: 20px;
     box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    display: block;
+    margin: 0 auto;
 }
 
 .about-content {
