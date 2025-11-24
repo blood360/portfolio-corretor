@@ -4,7 +4,7 @@
 .home-wrapper {
     width: 100%;
     background-color: #f8faff;
-    overflow-x: hidden; /* Garante que nada vaze lateralmente */
+    overflow-x: hidden; 
 }
 
 /* ========================================= */
@@ -14,10 +14,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    
-    /* Espaçamento interno generoso */
-    padding: 120px 10% 120px 10%; 
-    
+    padding: 40px 10% 80px 10%;
     background: var(--gradient-main); 
     color: white;
     position: relative;
@@ -27,7 +24,7 @@
 
 .hero-content {
     max-width: 50%;
-    z-index: 2; /* Garante que o texto fique na frente */
+    z-index: 5; /* Texto sempre na frente */
 }
 
 .hero-badge {
@@ -42,10 +39,11 @@
 }
 
 .hero-content h1 {
-    font-size: 3rem;
-    line-height: 1.2; /* Aumentado para não cortar acentos */
+    font-size: 3.2rem;
+    line-height: 1.3; /* Aumentado para não cortar acentos */
     margin-bottom: 20px;
     color: white;
+    padding-top: 10px; /* Espaço extra pro topo da letra */
 }
 
 .hero-content p {
@@ -58,7 +56,7 @@
 .hero-buttons {
     display: flex;
     gap: 15px;
-    flex-wrap: wrap; /* Permite quebrar linha se a tela for estreita */
+    flex-wrap: wrap; 
 }
 
 .btn-hero {
@@ -86,19 +84,25 @@
     transform: translateY(-3px);
 }
 
-/* Imagem Redonda */
+.hero-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .hero-image img {
-    width: 350px; 
+    width: 350px;
     height: 350px;
-    border-radius: 50%; 
-    object-fit: cover; 
-    object-position: center top;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center center;
     box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    border: 5px solid rgba(255,255,255,0.2);
+    border: 6px solid rgba(255,255,255,0.25);
 }
 
 /* ========================================= */
-/* 2. FAIXA DE DESTAQUES (CARDS) - CORRIGIDO */
+/* 2. FAIXA DE DESTAQUES (TEXTO CORTADO)     */
 /* ========================================= */
 .features-strip {
     display: flex;
@@ -108,20 +112,19 @@
     padding: 0 5%;
     position: relative;
     z-index: 10;
-    flex-wrap: wrap; /* Permite quebrar linha se faltar espaço */
+    flex-wrap: wrap;
 }
 
 .feature-card {
     background: white;
-    /* AUMENTADO O PADDING para o texto não bater na borda */
-    padding: 30px 25px; 
+    padding: 30px 40px; /* Mais altura interna */
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.08);
     flex: 1;
-    /* Define um tamanho mínimo para o texto não esmagar */
     min-width: 250px; 
     text-align: center;
     transition: transform 0.3s ease;
+    overflow: visible;
 }
 
 .feature-card:hover {
@@ -130,10 +133,11 @@
 
 .feature-card h3 {
     color: var(--color-blue-primary);
-    font-size: 1.3rem;
-    margin-bottom: 15px;
-    /* AUMENTADO PARA EVITAR CORTES EM LETRAS COMO 'g', 'j', 'p' */
-    line-height: 1.4; 
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    line-height: 1.6;
+    padding: 5px 0;
+    
     width: 100%;
 }
 
@@ -154,7 +158,8 @@
     color: var(--color-teal-secondary);
     font-size: 2.2rem;
     margin-bottom: 10px;
-    line-height: 1.3;
+    line-height: 1.4;
+    padding: 5px 0;
 }
 
 .carousel-wrapper {
@@ -162,19 +167,18 @@
     display: flex;
     justify-content: center;
     width: 100%;
-    padding-bottom: 20px; /* Espaço para a sombra não cortar */
+    padding-bottom: 20px; 
 }
 
 /* ========================================= */
-/* 4. SOBRE (CORRIGIDO CORTES)               */
+/* 4. SOBRE                                  */
 /* ========================================= */
 .about-section {
     display: flex;
     align-items: center;
     gap: 50px;
-    padding: 80px 10%; /* Mais margem lateral */
+    padding: 80px 10%;
     background-color: white;
-    overflow: hidden; /* Garante que nada vaze */
 }
 
 .about-image {
@@ -187,13 +191,13 @@
     width: 100%;
     max-width: 400px;
     height: auto;
-    border-radius: 20px 0 20px 0;
+    object-fit: contain; 
+    border-radius: 20px;
     box-shadow: 0 15px 30px rgba(0,0,0,0.1);
 }
 
 .about-content {
     flex: 1;
-    /* Adicionado padding para o texto não colar na borda direita */
     padding: 10px; 
 }
 
@@ -203,18 +207,20 @@
     font-size: 0.9rem;
     letter-spacing: 1px;
     margin-bottom: 10px;
+    padding-top: 5px; /* Evita corte */
 }
 
 .about-content h2 {
     font-size: 2.5rem;
     color: var(--color-blue-primary);
     margin-bottom: 20px;
-    line-height: 1.2; /* Aumentado para evitar corte */
+    line-height: 1.3;
+    padding: 5px 0;
 }
 
 .about-content p {
     font-size: 1.05rem;
-    line-height: 1.7;
+    line-height: 1.8;
     color: #555;
     margin-bottom: 20px;
 }
@@ -226,6 +232,7 @@
     display: inline-block;
     border-bottom: 2px solid var(--color-blue-primary);
     padding-bottom: 2px;
+    line-height: 1.5;
 }
 
 /* ========================================= */
@@ -243,8 +250,6 @@
     
     .hero-image { 
         margin-top: 30px; 
-        display: flex;
-        justify-content: center;
     }
 
     .hero-image img {
@@ -263,9 +268,8 @@
     }
     
     .feature-card {
-        /* No mobile, tira o min-width pra ele caber na tela */
         min-width: auto; 
-        margin: 0 10px; /* Margem lateral pra não colar na borda do celular */
+        margin: 0 10px; 
     }
 
     .about-section {
