@@ -1,55 +1,52 @@
-/* ======================================= */
-/* ESTILOS BASE (DESKTOP)                  */
-/* ======================================= */
 .menu-lateral {
     position: fixed; 
     top: 0;
     left: 0;
     width: 250px; 
     height: 100vh;
-    background-color: #2c3e50;
-    color: white;
+    /* AQUI MUDOU: Usando o gradiente da Marins */
+    background: var(--gradient-main); 
+    color: var(--text-light);
     padding: 20px 0;
-    /* Transição suave */
     transition: transform 0.3s ease-in-out;
     z-index: 1000; 
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1); /* Sombra mais suave */
 }
 
-/* Estado Fechado no Desktop (Recua exatamente a largura fixa) */
 .menu-lateral.fechado {
     transform: translateX(-250px); 
 }
 
-/* Estado Aberto no Desktop (Volta pra posição 0) */
 .menu-lateral.aberto {
     transform: translateX(0);
 }
 
-/* --- Cabeçalho do Menu --- */
 .menu-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Linha sutil */
+    padding-bottom: 10px;
 }
 
 .menu-header h3 {
-    color: #ecf0f1;
+    color: var(--text-light);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
 }
 
 .menu-lateral .fechar-btn {
     background: none;
     border: none;
-    color: white;
+    color: var(--text-light);
     font-size: 24px;
     cursor: pointer;
     padding: 5px;
-    line-height: 1;
 }
 
-/* --- Lista de Links --- */
 .menu-links {
     list-style: none;
     padding: 0;
@@ -57,19 +54,20 @@
 
 .menu-links li a {
     display: block;
-    padding: 15px 20px;
+    padding: 15px 25px;
     text-decoration: none;
-    color: #ecf0f1;
-    font-size: 1.1em;
-    transition: background-color 0.2s, color 0.2s;
+    color: rgba(255, 255, 255, 0.8); /* Branco levemente transparente */
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
 }
 
 .menu-links li a:hover {
-    background-color: #34495e;
-    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-light);
+    border-left: 4px solid var(--color-orange-accent); /* Detalhe laranja ao passar o mouse */
 }
 
-/* --- Rodapé do Menu --- */
 .menu-footer {
     position: absolute;
     bottom: 20px;
@@ -77,28 +75,21 @@
     text-align: center;
     padding: 0 20px;
     font-size: 0.85em;
-    color: #bdc3c7;
+    color: rgba(255, 255, 255, 0.6);
 }
 
-/* ======================================= */
-/* CORREÇÃO CRÍTICA PARA MOBILE            */
-/* ======================================= */
+/* Mobile */
 @media (max-width: 768px) {
     .menu-lateral {
-        width: 100% !important; /* Ocupa a tela toda */
+        width: 100% !important;
+        transform: translateX(-100%); 
     }
-
-    /* AQUI ESTÁ O PULO DO GATO: */
-    /* Sobrescreve a regra de desktop. No mobile, recua 100% da largura */
     .menu-lateral.fechado {
         transform: translateX(-100%) !important; 
     }
-
     .menu-lateral.aberto {
         transform: translateX(0) !important;
     }
-    
-    /* Garante que o botão de fechar apareça, se necessário */
     .menu-header .fechar-btn {
         display: block;
     }

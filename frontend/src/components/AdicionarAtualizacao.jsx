@@ -4,11 +4,10 @@ const AdicionarAtualizacao = () => {
     const [formData, setFormData] = useState({
         titulo: '',
         descricao: '',
-        imagem: '', // Agora vai guardar o código Base64 da imagem
+        imagem: '', //guarda o código Base64 da imagem
     });
     const [status, setStatus] = useState('');
 
-    // Mantemos o handleChange para Título e Descrição
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -40,7 +39,7 @@ const AdicionarAtualizacao = () => {
         e.preventDefault();
         setStatus('Enviando (aguarde, pode demorar um pouquinho por causa da imagem)...');
         
-        const API_URL = '/api/atualizacoes'; 
+        const API_URL = '/api/atualizacoes';
 
         try {
             const response = await fetch(API_URL, {
@@ -83,24 +82,22 @@ const AdicionarAtualizacao = () => {
                 <label>Descrição:</label>
                 <textarea name="descricao" value={formData.descricao} onChange={handleChange} required />
                 
-                {/* MUDANÇA AQUI: Input de Arquivo em vez de Texto */}
                 <label>Escolha a Imagem (Upload do PC/Celular):</label>
-                <input 
+                <input
                     id="fileInput"
-                    type="file" 
-                    accept="image/*" 
-                    onChange={handleImageChange} 
-                    required 
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    required
                 />
                 
-                {/* Mostra uma prévia da imagem se ela já foi carregada */}
                 {formData.imagem && (
                     <div style={{marginTop: '15px', marginBottom: '15px', textAlign: 'center'}}>
                         <p style={{fontSize: '0.9em', color: '#666'}}>Pré-visualização:</p>
-                        <img 
-                            src={formData.imagem} 
-                            alt="Preview" 
-                            style={{maxWidth: '100%', maxHeight: '200px', borderRadius: '8px', border: '1px solid #ddd'}} 
+                        <img
+                            src={formData.imagem}
+                            alt="Preview"
+                            style={{maxWidth: '100%', maxHeight: '200px', borderRadius: '8px', border: '1px solid #ddd'}}
                         />
                     </div>
                 )}

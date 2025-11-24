@@ -1,38 +1,197 @@
 /* ============================================== */
-/* 1. CONTAINER FLEXÍVEL (RESOLVE O FOOTER)       */
+/* 1. VARIÁVEIS E BASE (NOVA IDENTIDADE VISUAL)   */
+/* ============================================== */
+:root {
+    /* Cores da Marins Benefícios */
+    --color-blue-primary: #0056b3;
+    --color-teal-secondary: #00a86b;
+    --color-orange-accent: #ff6b00;
+    --color-purple-accent: #6f42c1;
+    
+    /* Gradientes */
+    --gradient-main: linear-gradient(135deg, var(--color-blue-primary), var(--color-teal-secondary));
+    --gradient-hover: linear-gradient(135deg, var(--color-teal-secondary), var(--color-blue-primary));
+
+    /* Cores Neutras */
+    --text-dark: #2c3e50;
+    --text-light: #ffffff;
+    --text-muted: #7f8c8d;
+    --bg-light: #f4f7f9;
+    --bg-white: #ffffff;
+    --border-color: #e1e8ed;
+
+    /* Tipografia e Bordas */
+    --font-primary: 'Poppins', 'Segoe UI', Tahoma, sans-serif;
+    --border-radius-card: 15px;
+    --border-radius-btn: 30px;
+    --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    font-family: var(--font-primary);
+    scroll-behavior: smooth;
+}
+
+#root {
+    height: 100%;
+    width: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--color-blue-primary);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+a {
+    text-decoration: none;
+    color: var(--color-blue-primary);
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--color-teal-secondary);
+}
+
+/* ============================================== */
+/* 2. CLASSES UTILITÁRIAS (NOVAS)                 */
+/* ============================================== */
+.btn-gradiente {
+    display: inline-block;
+    padding: 12px 30px;
+    background: var(--gradient-main);
+    color: var(--text-light) !important;
+    border-radius: var(--border-radius-btn);
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 86, 179, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-gradiente:hover {
+    background: var(--gradient-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 86, 179, 0.4);
+}
+
+.section-white {
+    background-color: var(--bg-white);
+    padding: 40px;
+    border-radius: var(--border-radius-card);
+    box-shadow: var(--shadow-soft);
+    margin-bottom: 30px;
+}
+
+/* ============================================== */
+/* 3. LAYOUT PRINCIPAL (MANTIDO E AJUSTADO)       */
 /* ============================================== */
 .layout-container {
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Ocupa no mínimo 100% da tela */
+    min-height: 100vh;
     width: 100%;
     position: relative;
-    overflow-x: hidden; /* Impede rolagem lateral no celular */
+    overflow-x: hidden;
 }
 
-/* ============================================== */
-/* 2. CONTEÚDO PRINCIPAL (O RECHEIO)              */
-/* ============================================== */
 .conteudo {
-    flex: 1; /* Faz o conteúdo crescer e empurrar o footer pra baixo */
+    flex: 1;
     width: 100%;
-    padding: 20px;
-    /* Transição suave da margem */
+    padding: 0;
     transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out; 
     box-sizing: border-box;
 }
 
+.toggle-button-fixed {
+    position: fixed;
+    z-index: 1100;
+    cursor: pointer;
+    border: none;
+    font-size: 1.5rem;
+    background-color: var(--color-blue-primary); /* Atualizado para a nova cor */
+    color: white;
+    border-radius: 5px;
+    padding: 5px 10px;
+    box-shadow: var(--shadow-soft);
+}
+
 /* ============================================== */
-/* 3. REGRAS DESKTOP (COMPUTADOR)                 */
+/* ESTILO DE INPUT MATERIAL DESIGN (TIPO IMAGE_7) */
 /* ============================================== */
+
+.material-input-group {
+    position: relative;
+    margin-bottom: 25px;
+    margin-top: 15px;
+}
+
+.material-input-field {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #ccc;
+    background-color: #e8e8e8;
+    border-radius: 12px;
+    font-size: 1rem;
+    color: #333;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+/* O rótulo (Label) que fica flutuando */
+.material-input-label {
+    position: absolute;
+    left: 15px;
+    top: -10px; /* Sobe para ficar na linha da borda */
+    background-color: #e8e8e8; /* Mesma cor do fundo do input para "cortar" a borda */
+    padding: 0 5px; /* Espacinho nas laterais do texto */
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #666; /* Cor cinza do texto inativo */
+    transition: all 0.3s ease;
+    pointer-events: none; /* Permite clicar no input através do label */
+}
+
+/* --- ESTADO DE FOCO (QUANDO CLICA) --- */
+
+/* Muda a cor da borda do input */
+.material-input-field:focus {
+    border-color: var(--color-blue-primary); /* Usa o azul da sua marca */
+    background-color: #fff; /* Opcional: fica branco ao focar pra destacar */
+    box-shadow: 0 4px 10px rgba(0, 86, 179, 0.1); /* Sombra suave */
+}
+
+/* Muda a cor do label e o fundo dele para acompanhar */
+.material-input-field:focus + .material-input-label {
+    color: var(--color-blue-primary); /* Label fica azul */
+    background-color: #fff; /* Fundo do label acompanha o do input */
+}
+
+/* Ajuste para Textarea (caixa grande de texto) */
+textarea.material-input-field {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* ============================================== */
+/* 4. RESPONSIVIDADE                              */
+/* ============================================== */
+
+/* Desktop */
 @media (min-width: 769px) {
-    /* Quando o menu abre, empurra o conteúdo */
     .conteudo.menu-aberto {
         margin-left: 250px; 
         width: calc(100% - 250px); 
     }
     
-    /* Quando fecha, ocupa tudo */
     .conteudo.menu-fechado {
         margin-left: 0;
         width: 100%;
@@ -44,35 +203,18 @@
     }
 }
 
-/* ============================================== */
-/* 4. REGRAS MOBILE (CELULAR) - RESOLVE O MENU    */
-/* ============================================== */
+/* Mobile */
 @media (max-width: 768px) {
-    /* No celular, a margem é SEMPRE ZERO. O menu passa por cima. */
     .conteudo, 
     .conteudo.menu-aberto, 
     .conteudo.menu-fechado {
         margin-left: 0 !important;
         width: 100% !important;
-        padding-top: 70px; /* Espaço pro botão não ficar em cima do texto */
+        padding-top: 80px;
     }
 
     .toggle-button-fixed {
         top: 15px;
         left: 15px;
-        background-color: #007bff;
-        color: white;
-        border-radius: 5px;
-        padding: 5px 10px;
-        z-index: 1001;
     }
-}
-
-/* Botão Fixo Global */
-.toggle-button-fixed {
-    position: fixed;
-    z-index: 1100; /* Maior que o menu (1000) pra ficar clicável */
-    cursor: pointer;
-    border: none;
-    font-size: 1.5rem;
 }

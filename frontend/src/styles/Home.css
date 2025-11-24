@@ -1,75 +1,235 @@
-.home-container {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.home-container h2 {
-    color: #007bff; 
-    margin-bottom: 15px;
-    border-bottom: 2px solid #007bff;
-    padding-bottom: 10px;
-}
-
-.home-container h3 {
-    color: #333;
-    margin-top: 30px;
-    margin-bottom: 15px;
-}
-
-.home-container p {
-    line-height: 1.6;
-    margin-bottom: 20px;
-    color: #555;
-    text-align: justify;
-}
-
-/* Estilos de Card de Atualização */
-/* O .card-atualizacao deve ser ajustado para ser responsivo dentro do carrossel */
-.card-atualizacao {
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden; 
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    /* Removido transform: translateY para não interferir no carrossel */
-}
-
-.card-imagem {
+/* ========================================= */
+/* GERAL DA HOME                             */
+/* ========================================= */
+.home-wrapper {
     width: 100%;
-    height: 180px; 
-    object-fit: cover; 
+    background-color: #f8faff;
 }
 
-.card-corpo {
-    padding: 15px;
-    text-align: left;
-}
-
-.card-corpo h4 {
-    color: #d9534f; 
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 1.2em;
-}
-
-.card-corpo p {
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 15px;
-}
-
-.ler-mais-btn {
-    background-color: #007bff;
+/* ========================================= */
+/* 1. HERO SECTION (TOPO DEGRADÊ)            */
+/* ========================================= */
+.hero-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 5% 100px 5%;
+    background: var(--gradient-main);
     color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s;
+    position: relative;
+    border-bottom-right-radius: 100px;
+    min-height: auto;
 }
 
-.ler-mais-btn:hover {
-    background-color: #0056b3;
+.hero-content {
+    max-width: 50%;
+}
+
+.hero-badge {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    color: white; /* Força branco no título */
+}
+
+.hero-content p {
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-hero {
+    padding: 10px 30px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.3s ease;
+}
+
+.btn-hero.primary {
+    background-color: var(--color-orange-accent, #ff6b00);
+    color: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.btn-hero.secondary {
+    background-color: transparent;
+    border: 2px solid white;
+    color: white;
+}
+
+.btn-hero:hover {
+    transform: translateY(-3px);
+}
+
+.hero-image img {
+    width: 350px;
+    max-width: 450px;
+    max-height: 550px;
+    height: 350px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 50%;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    border: 5px solid rgba(255,255,255,0.1);
+}
+
+/* ========================================= */
+/* 2. FAIXA DE DESTAQUES (CARDS FLUTUANTES)  */
+/* ========================================= */
+.features-strip {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: -5px; /* Faz subir pra cima do Hero */
+    padding: 0 5%;
+    position: relative;
+    z-index: 10;
+}
+
+.feature-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    flex: 1;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+}
+
+.feature-card h3 {
+    color: var(--color-blue-primary);
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+/* ========================================= */
+/* 3. ATUALIZAÇÕES                           */
+/* ========================================= */
+.updates-section {
+    padding: 80px 5%;
+    text-align: center;
+}
+
+.section-header h2 {
+    color: var(--color-teal-secondary);
+    font-size: 2.5rem;
+}
+
+.carousel-wrapper {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+/* ========================================= */
+/* 4. SOBRE (LADO A LADO)                    */
+/* ========================================= */
+.about-section {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    padding: 80px 5%;
+    background-color: white;
+}
+
+.about-image {
+    flex: 1;
+}
+
+.about-image img {
+    width: 100%;
+    border-radius: 20px 0 20px 0; /* Canto arredondado estiloso */
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+.about-content {
+    flex: 1;
+}
+
+.about-content h4 {
+    color: var(--color-orange-accent, #ff6b00);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.about-content h2 {
+    font-size: 2.5rem;
+    color: var(--color-blue-primary);
+    margin-bottom: 20px;
+}
+
+.btn-link {
+    color: var(--color-blue-primary);
+    font-weight: bold;
+    margin-top: 20px;
+    display: inline-block;
+    border-bottom: 2px solid var(--color-blue-primary);
+}
+
+/* ========================================= */
+/* RESPONSIVIDADE (MOBILE)                   */
+/* ========================================= */
+@media (max-width: 768px) {
+    .hero-section {
+        flex-direction: column;
+        text-align: center;
+        padding: 60px 5% 80px 5%;
+        padding-bottom: 50px;
+        padding: 100px 5% 80px 5%;
+    }
+
+    .hero-content { max-width: 100%; }
+    .hero-content h1 { font-size: 2.5rem; }
+    
+    .hero-image { 
+        margin-top: 30px; 
+        display: block;
+        display: flex;
+        justify-content: center;
+    }
+
+    .hero-image img {
+        width: 200px;
+        height: 200px;
+        margin-top: 20px;
+        max-width: 80%;
+        max-height: 350px;
+    }
+
+    .hero-buttons {
+        justify-content: center;
+    }
+
+    .features-strip {
+        flex-direction: column;
+        margin-top: -30px; /* Remove o efeito flutuante no mobile */
+    }
+
+    .about-section {
+        flex-direction: column;
+    }
 }
