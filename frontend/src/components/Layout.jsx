@@ -7,7 +7,9 @@ import Cotacao from '../pages/Cotacao';
 import Contato from '../pages/Contato';
 import Footer from './Footer';
 import Admin from '../pages/Admin';
-import '../App.css'; // Garante que o CSS global está aqui
+import Login from '../pages/Login';
+import RotaProtegida from './RotaProtegida';
+import "../App.css";
 
 const Layout = () => {
     const [menuAberto, setMenuAberto] = useState(false);
@@ -16,12 +18,10 @@ const Layout = () => {
         setMenuAberto(!menuAberto);
     };
 
-    // Lógica da classe para empurrar o conteúdo
     const contentClass = `conteudo ${menuAberto ? 'menu-aberto' : 'menu-fechado'}`;
 
     return (
         <Router>
-            {/* AQUI ESTÁ O SEGREDO: Uma div que envolve tudo */}
             <div className="layout-container">
                 
                 <button onClick={toggleMenu} className='toggle-button-fixed'>
@@ -36,7 +36,14 @@ const Layout = () => {
                         <Route path="/administradoras" element={<Administradoras />} />
                         <Route path="/cotacao" element={<Cotacao />} />
                         <Route path="/contato" element={<Contato />} />
-                        <Route path="/admin" element={<Admin />} />
+                        
+                        <Route path="/login" element={<Login />} />
+
+                        <Route path="/admin" element={
+                            <RotaProtegida>
+                                <Admin />
+                            </RotaProtegida>
+                        } />
                     </Routes>
                 </main>
 
