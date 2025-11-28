@@ -295,3 +295,36 @@
 .detalhes-btn:hover {
     background-color: #138496;
 }
+
+@media (max-width: 768px) {
+    .admin-container {
+        padding: 10px; /* DIMINUI a borda no container geral */
+    }
+
+    .admin-tabs {
+        /* Permite que os botões quebrem para a linha de baixo */
+        flex-wrap: wrap;
+        gap: 8px; /* Espaço menor entre eles */
+        border-bottom: none; /* Remove a linha de baixo pra não ficar estranho */
+    }
+
+    .admin-tab-btn {
+        /* Faz cada botão tentar ocupar 48% da tela (ficam 2 por linha) */
+        flex: 1 1 45%; 
+        
+        font-size: 0.8rem; /* Letra um pouco menor */
+        padding: 10px 5px; /* Menos espaço interno */
+        text-align: center;
+        
+        /* Permite que o texto DENTRO do botão quebre linha se for grande */
+        white-space: normal; 
+        line-height: 1.2;
+        
+        border-radius: 5px; 
+        border-bottom: 1px solid #ddd; 
+    }
+
+    .admin-tab-btn.active {
+        border-color: #007bff;
+    }
+}

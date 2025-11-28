@@ -210,11 +210,17 @@ textarea.material-input-field {
     .conteudo.menu-fechado {
         margin-left: 0 !important;
         width: 100% !important;
-        padding-top: 80px;
+        padding-top: 0 !important;
+        
+        padding-left: 0 !important;
+        padding-right: 0 !important;
     }
 
     .toggle-button-fixed {
         top: 15px;
         left: 15px;
+        background-color: rgba(0, 123, 255, 0.2);
+        backdrop-filter: blur(5px); /* Efeito de vidro (opcional) */
+        border: 1px solid rgba(255,255,255,0.3);
     }
 }

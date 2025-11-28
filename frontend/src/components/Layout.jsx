@@ -7,9 +7,9 @@ import Cotacao from '../pages/Cotacao';
 import Contato from '../pages/Contato';
 import Footer from './Footer';
 import Admin from '../pages/Admin';
-import Login from '../pages/Login';
-import RotaProtegida from './RotaProtegida';
-import "../App.css";
+import Login from '../pages/Login'; 
+import RotaProtegida from './RotaProtegida'; 
+import "../App.css"; 
 
 const Layout = () => {
     const [menuAberto, setMenuAberto] = useState(false);
@@ -23,10 +23,11 @@ const Layout = () => {
     return (
         <Router>
             <div className="layout-container">
-                
-                <button onClick={toggleMenu} className='toggle-button-fixed'>
-                    {menuAberto ? 'X': '☰'}
-                </button>
+                {!menuAberto && (
+                    <button onClick={toggleMenu} className='toggle-button-fixed'>
+                        ☰
+                    </button>
+                )}
 
                 <MenuLateral isOpen={menuAberto} toggleMenu={toggleMenu} />
 
@@ -36,9 +37,7 @@ const Layout = () => {
                         <Route path="/administradoras" element={<Administradoras />} />
                         <Route path="/cotacao" element={<Cotacao />} />
                         <Route path="/contato" element={<Contato />} />
-                        
                         <Route path="/login" element={<Login />} />
-
                         <Route path="/admin" element={
                             <RotaProtegida>
                                 <Admin />

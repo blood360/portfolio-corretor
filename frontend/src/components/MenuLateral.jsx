@@ -1,25 +1,29 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'; 
 import '../styles/MenuLateral.css'; 
 
 const MenuLateral = ({ isOpen, toggleMenu }) => {
   return (
     <nav className={`menu-lateral ${isOpen ? 'aberto' : 'fechado'}`}>
       <div className="menu-header">
-        {/* Aqui pode ir a logo do corretor */}
-        <h3>Corretora Marins</h3>
+        
+        <img 
+            src="/images/logo_adriano.png" 
+            alt="Logo AS" 
+            className="menu-logo-img" 
+        />
+        
         <button onClick={toggleMenu} className="fechar-btn">
-          {isOpen ? 'X' : '☰'}
+          X
         </button>
       </div>
 
       <ul className="menu-links">
-        <li><a href="/">🏠 Inicio</a></li>
+        <li><a href="/">🏠 Home</a></li>
         <li><a href="/administradoras">📄 Administradoras</a></li>
         <li><a href="/cotacao">✍️ Solicitar Cotação</a></li>
         <li><a href="/contato">📞 Contato</a></li>
         
-        {/* --- NOVO BOTÃO DO ADMIN --- */}
         <li style={{marginTop: '20px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '10px'}}>
             <a href="/login" style={{color: '#ffc107'}}>
                 🔐 Área do Corretor
