@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'; 
-import AtualizacoesCarousel from '../components/AtualizacoesCarousel'; 
+import AtualizacoesCarousel from '../components/AtualizacoesCarousel';
+import FormularioDepoimento from '../components/FormularioDepoimento'; // Importação do formulário
 import '../styles/Home.css';
 
 const Home = () => {
@@ -15,8 +16,8 @@ const Home = () => {
         const resAtu = await fetch('/api/atualizacoes');
         if (resAtu.ok) setAtualizacoes(await resAtu.json());
 
-        // Busca Depoimentos
-        const resDepo = await fetch('/api/depoimentos');
+        // Busca Depoimentos Aprovados (Rota Pública)
+        const resDepo = await fetch('/api/depoimentos/publicos');
         if (resDepo.ok) setDepoimentos(await resDepo.json());
 
       } catch (error) {
@@ -87,7 +88,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 4. DEPOIMENTOS (DADOS DO BANCO) */}
+      {/* 4. DEPOIMENTOS */}
       <section className="reviews-section">
         <div className="section-header">
             <h2>O Que Nossos Clientes Dizem</h2>
@@ -109,6 +110,11 @@ const Home = () => {
                     </div>
                 ))
             )}
+        </div>
+
+        {/* FORMULÁRIO DE AVALIAÇÃO */}
+        <div style={{maxWidth: '600px', margin: '50px auto 0'}}>
+            <FormularioDepoimento />
         </div>
       </section>
 

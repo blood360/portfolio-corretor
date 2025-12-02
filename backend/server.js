@@ -53,7 +53,8 @@ const DepoimentoSchema = new mongoose.Schema({
     nome: String,
     local: String,
     texto: String,
-    estrelas: Number
+    estrelas: Number,
+    aprovado: { type: Boolean, default: false } // <--- NOVIDADE: Nasce falso (pendente)
 }, defaultOpts);
 const Depoimento = mongoose.model('Depoimento', DepoimentoSchema);
 
@@ -129,22 +130,36 @@ app.delete('/api/administradoras/:id', async (req, res) => {
 });
 
 // -- ROTA PARA DEPOIMENTOS --
-app.get('/api/depoimentos', async (req, res) => {
+app.get('/api/depoimentos/publicos', async (req, res) => {
     try {
-        // Pega os últimos 6 depoimentos
-        const lista = await Depoimento.find().sort({ createdAt: -1 }).limit(6);
+        const lista = await Depoimento.find({ aprovado: true }).sort({ createdAt: -1 }).limit(6);
         res.json(lista.map(i => ({ ...i._doc, id: i._id })));
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
-
+// ROTA ADMIN (Painel): Traz tudo (aprovados e pendentes)
+app.get('/api/depoimentos/todos', async (req, res) => {
+    try {
+        const lista = await Depoimento.find().sort({ createdAt: -1 });
+        res.json(lista.map(i => ({ ...i._doc, id: i._id })));
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+// ROTA POST (Cliente envia): Salva como pendente
 app.post('/api/depoimentos', async (req, res) => {
     try {
-        const nova = new Depoimento(req.body);
+        const nova = new Depoimento({ ...req.body, aprovado: false });
         await nova.save();
-        res.status(201).json({ message: 'Depoimento Salvo' });
+        res.status(201).json({ message: 'Recebido para moderação' });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+// ROTA PUT (Admin Aprova): Muda para aprovado = true
+app.put('/api/depoimentos/:id/aprovar', async (req, res) => {
+    try {
+        await Depoimento.findByIdAndUpdate(req.params.id, { aprovado: true });
+        res.json({ message: 'Aprovado!' });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// ROTA DELETE (Admin apaga)
 app.delete('/api/depoimentos/:id', async (req, res) => {
     try { await Depoimento.findByIdAndDelete(req.params.id); res.json({ msg: 'OK' }); }
     catch (e) { res.status(500).json({ error: e.message }); }
