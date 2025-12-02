@@ -1,40 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import AtualizacoesCarousel from '../components/AtualizacoesCarousel';
+import { Link } from 'react-router-dom'; 
+import AtualizacoesCarousel from '../components/AtualizacoesCarousel'; 
 import '../styles/Home.css';
 
 const Home = () => {
   const [atualizacoes, setAtualizacoes] = useState([]);
+  const [depoimentos, setDepoimentos] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchAtualizacoes = async () => {
-      const API_ENDPOINT = '/api/atualizacoes'; 
-
+    const fetchData = async () => {
       try {
-        const response = await fetch(API_ENDPOINT);
-        
-        if (response.ok) {
-          const data = await response.json();
-          setAtualizacoes(data);
-        } else {
-          console.error('Erro ao buscar atualizações:', response.status);
-        }
+        // Busca Atualizações
+        const resAtu = await fetch('/api/atualizacoes');
+        if (resAtu.ok) setAtualizacoes(await resAtu.json());
+
+        // Busca Depoimentos
+        const resDepo = await fetch('/api/depoimentos');
+        if (resDepo.ok) setDepoimentos(await resDepo.json());
+
       } catch (error) {
-        console.error('Erro de rede ao buscar atualizações:', error);
+        console.error('Erro de rede ao buscar dados:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAtualizacoes();
+    fetchData();
   }, []);
-  // -----------------------------------------
+
+  const renderEstrelas = (qtd) => "⭐".repeat(qtd);
 
   return (
     <div className="home-wrapper">
       
-      {/* 1. HERO SECTION (TOPO DEGRADÊ) */}
+      {/* 1. HERO SECTION */}
       <section className="hero-section">
         <div className="hero-content">
           <span className="hero-badge">Corretora Marins Benefícios</span>
@@ -50,13 +50,12 @@ const Home = () => {
           </div>
         </div>
         
-        {/* IMAGEM DO TOPO (Se tiver uma foto sua, coloque o nome dela aqui em public/images/) */}
         <div className="hero-image">
-            <img src="/images/perfil.png" alt="Corretor Adriano Santos" />
+            <img src="/images/perfil.png" alt="Corretor Adriano Santos" onError={(e) => e.target.src='https://via.placeholder.com/350'} />
         </div>
       </section>
 
-      {/* 2. FAIXA DE DESTAQUES (CARDS FLUTUANTES) */}
+      {/* 2. DESTAQUES */}
       <section className="features-strip">
         <div className="feature-card">
             <h3>Planos Individuais</h3>
@@ -72,7 +71,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 3. ATUALIZAÇÕES (CARROSSEL DO BACKEND) */}
+      {/* 3. ATUALIZAÇÕES */}
       <section className="updates-section">
         <div className="section-header">
           <h2>Novidades & Oportunidades</h2>
@@ -80,30 +79,53 @@ const Home = () => {
         </div>
         
         <div className="carousel-wrapper">
-             {loading ? (
-                <p>Carregando as últimas notícias...</p>
-             ) : (
-                /* Aqui usamos os dados reais do estado 'atualizacoes' */
+            {loading ? (
+                <p>Carregando...</p>
+            ) : (
                 <AtualizacoesCarousel items={atualizacoes} />
-             )}
+            )}
         </div>
       </section>
 
-      {/* 4. SOBRE (NOSSA MISSÃO) */}
+      {/* 4. DEPOIMENTOS (DADOS DO BANCO) */}
+      <section className="reviews-section">
+        <div className="section-header">
+            <h2>O Que Nossos Clientes Dizem</h2>
+            <p>A satisfação de quem já contratou com a Marins Benefícios.</p>
+        </div>
+
+        <div className="reviews-grid">
+            {depoimentos.length === 0 && !loading ? (
+                <p>Seja o primeiro a deixar seu depoimento!</p>
+            ) : (
+                depoimentos.map(depo => (
+                    <div key={depo.id} className="review-card">
+                        <div className="review-stars">{renderEstrelas(depo.estrelas)}</div>
+                        <p className="review-text">"{depo.texto}"</p>
+                        <div className="review-author">
+                            <h5>{depo.nome}</h5>
+                            <span>{depo.local}</span>
+                        </div>
+                    </div>
+                ))
+            )}
+        </div>
+      </section>
+
+      {/* 5. SOBRE */}
       <section className="about-section">
         <div className="about-image">
-             {/* Você pode trocar essa imagem por outra em public/images */}
-             <img src="/images/logomarins.png" alt="Marins Benefícios" />
+            <img src="/images/logomarins.png" alt="Marins Benefícios" onError={(e) => e.target.src='https://via.placeholder.com/400'} />
         </div>
         <div className="about-content">
-             <h4>Quem Somos</h4>
-             <h2>Nossa Missão</h2>
-             <p>
+            <h4>Quem Somos</h4>
+            <h2>Nossa Missão</h2>
+            <p>
                 Prover tranquilidade e segurança, com planos que são garantia de paz.
-                Conte comigo pra fazer o melhor negócio! 
+                Conte comigo pra fazer o melhor negócio!
                 Na <strong>Marins Benefícios</strong>, nosso foco é descomplicar o acesso à saúde.
-             </p>
-             <Link to="/contato" className="btn-link">Entre em Contato &rarr;</Link>
+            </p>
+            <Link to="/contato" className="btn-link">Entre em Contato &rarr;</Link>
         </div>
       </section>
 

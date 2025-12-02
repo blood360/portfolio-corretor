@@ -48,6 +48,15 @@ const AdministradoraSchema = new mongoose.Schema({
 }, defaultOpts);
 const Administradora = mongoose.model('Administradora', AdministradoraSchema);
 
+//-- DEPOIMENTOS DOS CLIENTES --
+const DepoimentoSchema = new mongoose.Schema({
+    nome: String,
+    local: String,
+    texto: String,
+    estrelas: Number
+}, defaultOpts);
+const Depoimento = mongoose.model('Depoimento', DepoimentoSchema);
+
 // ROTAS API
 
 // --- Cotações ---
@@ -98,7 +107,7 @@ app.put('/api/atualizacoes/:id', async (req, res) => {
     catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// --- Administradoras (NOVA ROTA DINÂMICA) ---
+// --- Administradoras ---
 app.get('/api/administradoras', async (req, res) => {
     try {
         const lista = await Administradora.find();
@@ -116,6 +125,28 @@ app.post('/api/administradoras', async (req, res) => {
 
 app.delete('/api/administradoras/:id', async (req, res) => {
     try { await Administradora.findByIdAndDelete(req.params.id); res.json({ msg: 'OK' }); }
+    catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// -- ROTA PARA DEPOIMENTOS --
+app.get('/api/depoimentos', async (req, res) => {
+    try {
+        // Pega os últimos 6 depoimentos
+        const lista = await Depoimento.find().sort({ createdAt: -1 }).limit(6);
+        res.json(lista.map(i => ({ ...i._doc, id: i._id })));
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/depoimentos', async (req, res) => {
+    try {
+        const nova = new Depoimento(req.body);
+        await nova.save();
+        res.status(201).json({ message: 'Depoimento Salvo' });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.delete('/api/depoimentos/:id', async (req, res) => {
+    try { await Depoimento.findByIdAndDelete(req.params.id); res.json({ msg: 'OK' }); }
     catch (e) { res.status(500).json({ error: e.message }); }
 });
 

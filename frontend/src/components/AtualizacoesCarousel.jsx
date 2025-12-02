@@ -4,32 +4,30 @@ import '../styles/AtualizacoesCarousel.css';
 
 const AtualizacoesCarousel = ({ items }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  // NOVO ESTADO: Para controlar o fade-in/fade-out
-  const [isFading, setIsFading] = useState(false); 
+  const [isFading, setIsFading] = useState(false);
+  // Estado para saber se o mouse está em cima (pausa o carrossel)
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     if (items.length === 0) return;
+    if (isPaused) return; // SE ESTIVER PAUSADO, NÃO FAZ NADA!
 
+    // AUMENTEI PARA 6000ms (6 Segundos)
     const interval = setInterval(() => {
-        // 1. Inicia o fade-out (deixa o card invisível)
-        setIsFading(true); 
+        setIsFading(true);
 
-        // 2. Após 500ms (tempo da transição CSS de saída), troca o índice
         const fadeOutTimer = setTimeout(() => {
             setCurrentIndex((prevIndex) => (prevIndex + 1) % items.length);
-            // 3. Imediatamente após trocar o índice, inicia o fade-in (deixa o card visível)
-            setIsFading(false); 
-        }, 500); // Metade do tempo da transição no CSS
+            setIsFading(false);
+        }, 500);
 
-        // Limpa o timer de saída se o componente for desmontado antes
         return () => clearTimeout(fadeOutTimer);
 
-    }, 3000); // O TEMPO TOTAL do intervalo continua sendo 3 segundos
+    }, 6000);
 
     return () => clearInterval(interval);
-  }, [items.length]); 
+  }, [items.length, isPaused]);
   
-  // Função para mudar o card ao clicar no indicador (garantindo o fade)
   const handleIndicatorClick = (index) => {
     setIsFading(true);
     setTimeout(() => {
@@ -45,10 +43,15 @@ const AtualizacoesCarousel = ({ items }) => {
   const currentItem = items[currentIndex];
 
   return (
-    <div className="carousel-container">
-      {/* Aplica a classe 'fade-out' quando estiver em transição */}
+    <div 
+        className="carousel-container"
+        // PAUSA QUANDO O MOUSE ENTRA (OU TOCA NO CELULAR)
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={() => setIsPaused(true)} // Para celular
+    >
       <div className={`carousel-item ${isFading ? 'fade-out' : 'fade-in'}`}>
-        <CardAtualizacao data={currentItem} />
+          <CardAtualizacao data={currentItem} isCarousel={true} />
       </div>
 
       <div className="carousel-indicators">

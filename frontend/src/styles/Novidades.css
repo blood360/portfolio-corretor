@@ -1,0 +1,44 @@
+.novidades-container {
+    padding: 40px 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.novidades-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.novidades-header h2 {
+    color: var(--color-blue-primary);
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.novidades-header p {
+    color: #666;
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* GRID RESPONSIVO */
+.novidades-grid {
+    display: grid;
+    /* Cria colunas automáticas de no mínimo 300px */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+    gap: 30px;
+    justify-items: center; /* Centraliza os cards na célula */
+}
+
+/* Ajuste para o Card preencher o espaço se necessário */
+.novidades-grid .card-atualizacao {
+    width: 100%;
+    margin: 0; /* Remove a margem lateral que usamos no carrossel */
+}
+
+@media (max-width: 768px) {
+    .novidades-header h2 {
+        font-size: 2rem;
+    }
+}

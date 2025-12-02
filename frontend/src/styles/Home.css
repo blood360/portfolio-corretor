@@ -235,6 +235,69 @@
     line-height: 1.5;
 }
 
+/* ... (código anterior das atualizações) ... */
+
+/* ========================================= */
+/* 4. SEÇÃO DE DEPOIMENTOS (REVIEWS)         */
+/* ========================================= */
+.reviews-section {
+    padding: 80px 5%;
+    background-color: #ffffff;
+}
+
+.reviews-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+}
+
+.review-card {
+    background-color: #f8faff;
+    border: 1px solid #e1e8ed;
+    border-radius: 15px;
+    padding: 30px;
+    flex: 1;
+    min-width: 280px;
+    max-width: 350px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    border-color: var(--color-blue-primary);
+}
+
+.review-stars {
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.review-text {
+    font-style: italic;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.review-author h5 {
+    color: var(--color-blue-primary);
+    font-size: 1.1rem;
+    margin-bottom: 2px;
+    font-weight: 700;
+}
+
+.review-author span {
+    color: #999;
+    font-size: 0.85rem;
+}
+
 /* ========================================= */
 /* RESPONSIVIDADE (MOBILE)                   */
 /* ========================================= */
@@ -263,13 +326,13 @@
 
     .features-strip {
         flex-direction: column;
-        margin-top: -30px; 
+        margin-top: -30px;
         gap: 15px;
     }
     
     .feature-card {
-        min-width: auto; 
-        margin: 0 10px; 
+        min-width: auto;
+        margin: 0 10px;
     }
 
     .about-section {

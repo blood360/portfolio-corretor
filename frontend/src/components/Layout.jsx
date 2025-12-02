@@ -7,9 +7,10 @@ import Cotacao from '../pages/Cotacao';
 import Contato from '../pages/Contato';
 import Footer from './Footer';
 import Admin from '../pages/Admin';
-import Login from '../pages/Login'; 
-import RotaProtegida from './RotaProtegida'; 
-import "../App.css"; 
+import Login from '../pages/Login';
+import RotaProtegida from './RotaProtegida';
+import Novidades from '../pages/Novidades';
+import "../App.css";
 
 const Layout = () => {
     const [menuAberto, setMenuAberto] = useState(false);
@@ -34,6 +35,7 @@ const Layout = () => {
                 <main className={contentClass}>
                     <Routes>
                         <Route path='/' element={<Home />} />
+                        <Route path="/novidades" element={<Novidades />} />
                         <Route path="/administradoras" element={<Administradoras />} />
                         <Route path="/cotacao" element={<Cotacao />} />
                         <Route path="/contato" element={<Contato />} />

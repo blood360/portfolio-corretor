@@ -19,7 +19,8 @@ const MenuLateral = ({ isOpen, toggleMenu }) => {
       </div>
 
       <ul className="menu-links">
-        <li><a href="/">🏠 Home</a></li>
+        <li><a href="/">🏠 Início</a></li>
+        <li><a href="/novidades">📢 Novidades</a></li>
         <li><a href="/administradoras">📄 Administradoras</a></li>
         <li><a href="/cotacao">✍️ Solicitar Cotação</a></li>
         <li><a href="/contato">📞 Contato</a></li>
