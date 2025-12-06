@@ -2,29 +2,37 @@
 /* 1. VARIÁVEIS E BASE (NOVA IDENTIDADE VISUAL)   */
 /* ============================================== */
 :root {
-    /* Cores da Marins Benefícios */
-    --color-blue-primary: #0056b3;
-    --color-teal-secondary: #00a86b;
-    --color-orange-accent: #ff6b00;
-    --color-purple-accent: #6f42c1;
+    /* --- CORES BASE DA MARCA (MANTIDAS) --- */
+    --color-blue-primary: #0056b3; 
+    --color-teal-secondary: #00a86b; 
     
-    /* Gradientes */
-    --gradient-main: linear-gradient(135deg, var(--color-blue-primary), var(--color-teal-secondary));
-    --gradient-hover: linear-gradient(135deg, var(--color-teal-secondary), var(--color-blue-primary));
+    /* --- CORES DE NATAL (NOVAS) --- */
+    --color-christmas-red: #d42426; /* Vermelho Noel */
+    --color-christmas-gold: #f8b229; /* Dourado Estrela */
+    --color-snow-white: #ffffff;
 
-    /* Cores Neutras */
+    /* --- ADAPTAÇÃO FESTIVA --- */
+    /* Troquei o gradiente principal para ter um toque mais "noite feliz" (Azul mais profundo) */
+    --gradient-main: linear-gradient(135deg, #003366, #0056b3);
+    
+    /* Trocamos o gradiente dos botões para VERMELHO */
+    --gradient-hover: linear-gradient(135deg, #b31217, #e52d27);
+
+    /* Cores de acento agora são o Dourado e o Vermelho */
+    --color-orange-accent: var(--color-christmas-red); /* Botões principais agora são vermelhos */
+    --text-highlight: var(--color-christmas-gold); /* Detalhes em dourado */
+
+    /* Cores Neutras (Mantidas) */
     --text-dark: #2c3e50;
     --text-light: #ffffff;
-    --text-muted: #7f8c8d;
     --bg-light: #f4f7f9;
     --bg-white: #ffffff;
-    --border-color: #e1e8ed;
 
     /* Tipografia e Bordas */
     --font-primary: 'Poppins', 'Segoe UI', Tahoma, sans-serif;
     --border-radius-card: 15px;
     --border-radius-btn: 30px;
-    --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.05);
+    --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 html, body {
@@ -164,9 +172,9 @@ a:hover {
 
 /* Muda a cor da borda do input */
 .material-input-field:focus {
-    border-color: var(--color-blue-primary); /* Usa o azul da sua marca */
-    background-color: #fff; /* Opcional: fica branco ao focar pra destacar */
-    box-shadow: 0 4px 10px rgba(0, 86, 179, 0.1); /* Sombra suave */
+    border-color: var(--color-blue-primary);
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 86, 179, 0.1);
 }
 
 /* Muda a cor do label e o fundo dele para acompanhar */

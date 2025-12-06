@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'; 
 import AtualizacoesCarousel from '../components/AtualizacoesCarousel';
-import FormularioDepoimento from '../components/FormularioDepoimento'; // Importação do formulário
+import FormularioDepoimento from '../components/FormularioDepoimento';
+import Snowfall from '../components/Snowfall'; // <--- Importando a neve
 import '../styles/Home.css';
 
 const Home = () => {
@@ -12,11 +13,9 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Busca Atualizações
         const resAtu = await fetch('/api/atualizacoes');
         if (resAtu.ok) setAtualizacoes(await resAtu.json());
 
-        // Busca Depoimentos Aprovados (Rota Pública)
         const resDepo = await fetch('/api/depoimentos/publicos');
         if (resDepo.ok) setDepoimentos(await resDepo.json());
 
@@ -35,18 +34,29 @@ const Home = () => {
   return (
     <div className="home-wrapper">
       
-      {/* 1. HERO SECTION */}
+      {/* 1. HERO SECTION (EDIÇÃO DE NATAL) */}
       <section className="hero-section">
+        {/* Adicionando a neve caindo */}
+        <Snowfall />
+
         <div className="hero-content">
-          <span className="hero-badge">Corretora Marins Benefícios</span>
-          <h1>Sua Saúde em <br/>Primeiro Lugar</h1>
+          {/* Badge Dourado */}
+          <span className="hero-badge" style={{backgroundColor: '#f8b229', color: '#003366', fontWeight: 'bold'}}>
+             🎅 Boas Festas & Muita Saúde!
+          </span>
+          
+          <h1>O Melhor Presente é <br/>Cuidar de Quem Ama</h1>
+          
           <p>
-            Olá! Eu sou o <strong>Corretor Adriano Santos</strong>. 
-            Com mais de 2 anos de experiência, meu trabalho é garantir a melhor escolha de um plano para você, sua família ou empresa.
-            Clareza, honestidade e o preço que cabe no seu bolso.
+            Neste Natal, garanta a proteção da sua família com a <strong>Corretora Marins</strong>.
+            Comece 2026 com o plano de saúde ideal e tranquilidade total.
           </p>
+
           <div className="hero-buttons">
-            <Link to="/cotacao" className="btn-hero primary">Fazer Cotação</Link>
+            {/* Botão Vermelho de Natal */}
+            <Link to="/cotacao" className="btn-hero primary" style={{backgroundColor: '#d42426'}}>
+                Fazer Cotação
+            </Link>
             <Link to="/contato" className="btn-hero secondary">Fale Comigo</Link>
           </div>
         </div>
@@ -112,7 +122,6 @@ const Home = () => {
             )}
         </div>
 
-        {/* FORMULÁRIO DE AVALIAÇÃO */}
         <div style={{maxWidth: '600px', margin: '50px auto 0'}}>
             <FormularioDepoimento />
         </div>

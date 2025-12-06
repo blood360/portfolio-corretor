@@ -1,36 +1,40 @@
 .carousel-container {
     position: relative;
     margin: 0 auto;
-    max-width: 350px;
     width: 100%;
+    max-width: 1200px; /* Largura máxima maior para caber 3 cards */
     min-height: 480px;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    padding-bottom: 40px; /* Espaço para as bolinhas */
+    overflow: hidden; /* Esconde o que está fora */
 }
 
-.carousel-item {
-    transition: opacity 0.5s ease-in-out;
-    position: absolute;
+/* O "Trilho" que segura os cards */
+.carousel-track {
+    display: flex;
+    justify-content: center; /* Centraliza se tiver poucos itens */
+    gap: 0; /* O espaçamento é controlado pelo padding do slot */
+    transition: transform 0.5s ease-in-out;
     width: 100%;
-    top: 0;
-    left: 0;
-    
+}
+
+/* Cada espaço onde fica um card */
+.carousel-slot {
+    padding: 0 10px; /* Espacinho entre os cards */
+    box-sizing: border-box;
     display: flex;
     justify-content: center;
 }
 
-.fade-in { opacity: 1; z-index: 2; }
-.fade-out { opacity: 0; z-index: 1; }
-
+/* Indicadores (Bolinhas) */
 .carousel-indicators {
     position: absolute;
-    bottom: 0px; 
+    bottom: 0;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     gap: 8px;
-    padding-bottom: 10px;
+    padding: 10px 0;
+    z-index: 10;
 }
 
 .indicator {
@@ -44,6 +48,13 @@
 }
 
 .indicator.active {
-    background-color: #0056b3;
+    background-color: var(--color-blue-primary, #0056b3);
     transform: scale(1.2);
+}
+
+.sem-atualizacoes {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
 }
