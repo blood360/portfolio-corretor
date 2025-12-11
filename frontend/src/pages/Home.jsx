@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'; 
 import AtualizacoesCarousel from '../components/AtualizacoesCarousel';
 import FormularioDepoimento from '../components/FormularioDepoimento';
-import Snowfall from '../components/Snowfall'; // <--- Importando a neve
+import Snowfall from '../components/Snowfall';
 import '../styles/Home.css';
 
 const Home = () => {
@@ -11,6 +11,10 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // --- SEO GARANTIDO (Sem bibliotecas externas) ---
+    document.title = "Corretor Adriano Santos | Planos de Saúde e Odontológicos";
+    // ------------------------------------------------
+
     const fetchData = async () => {
       try {
         const resAtu = await fetch('/api/atualizacoes');
@@ -34,15 +38,14 @@ const Home = () => {
   return (
     <div className="home-wrapper">
       
-      {/* 1. HERO SECTION (EDIÇÃO DE NATAL) */}
+      {/* 1. HERO SECTION (NATALINA) */}
       <section className="hero-section">
-        {/* Adicionando a neve caindo */}
+        {/* Neve Caindo */}
         <Snowfall />
 
         <div className="hero-content">
-          {/* Badge Dourado */}
           <span className="hero-badge" style={{backgroundColor: '#f8b229', color: '#003366', fontWeight: 'bold'}}>
-             🎅 Boas Festas & Muita Saúde!
+              🎅 Boas Festas & Muita Saúde!
           </span>
           
           <h1>O Melhor Presente é <br/>Cuidar de Quem Ama</h1>
@@ -53,7 +56,6 @@ const Home = () => {
           </p>
 
           <div className="hero-buttons">
-            {/* Botão Vermelho de Natal */}
             <Link to="/cotacao" className="btn-hero primary" style={{backgroundColor: '#d42426'}}>
                 Fazer Cotação
             </Link>
@@ -62,7 +64,13 @@ const Home = () => {
         </div>
         
         <div className="hero-image">
-            <img src="/images/perfil.png" alt="Corretor Adriano Santos" onError={(e) => e.target.src='https://via.placeholder.com/350'} />
+            <img 
+                src="/images/perfil.png" 
+                alt="Corretor Adriano Santos" 
+                width="350"
+                height="350"
+                onError={(e) => e.target.src='https://via.placeholder.com/350'} 
+            />
         </div>
       </section>
 
@@ -130,7 +138,14 @@ const Home = () => {
       {/* 5. SOBRE */}
       <section className="about-section">
         <div className="about-image">
-            <img src="/images/logomarins.png" alt="Marins Benefícios" onError={(e) => e.target.src='https://via.placeholder.com/400'} />
+            <img 
+                src="/images/logomarins.png"
+                alt="Marins Benefícios"
+                loading="lazy"
+                width="400"
+                height="300"
+                onError={(e) => e.target.src='https://via.placeholder.com/400'} 
+            />
         </div>
         <div className="about-content">
             <h4>Quem Somos</h4>

@@ -1,0 +1,32 @@
+.santa-track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1; /* Atrás do texto */
+}
+
+.santa-sleigh {
+    position: absolute;
+    width: 250px;
+    height: auto;
+    top: 20%;
+    transform: translateX(-150%);
+    animation: cruzarTela 25s linear infinite;
+}
+
+@keyframes cruzarTela {
+    0% { transform: translateX(-150%); }
+    100% { transform: translateX(120vw); } /* Vai até o final da direita */
+}
+
+@media (max-width: 768px) {
+    .santa-sleigh {
+        width: 120px;
+        top: 15%;
+        animation-duration: 15s;
+    }
+}

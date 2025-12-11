@@ -10,6 +10,7 @@ import Admin from '../pages/Admin';
 import Login from '../pages/Login';
 import RotaProtegida from './RotaProtegida';
 import Novidades from '../pages/Novidades';
+import BotaoWhatsApp from './BotaoWhatsApp';
 import "../App.css";
 
 const Layout = () => {
@@ -48,6 +49,7 @@ const Layout = () => {
                     </Routes>
                 </main>
 
+                <BotaoWhatsApp />
                 <Footer />
             </div>
         </Router>
