@@ -1,173 +1,272 @@
 import React, { useState } from 'react';
 import '../styles/Cotacao.css';
 
-const Cotacao = () => {
-    // Estado simplificado para capturar Lead Rápido
-    const [form, setForm] = useState({ 
-        nome: '', 
-        telefone: '', 
-        email: '', 
-        tipo: 'PF', // PF ou PJ
-        cnpj: '',   // Novo campo
-        vidas: '',  // Começa vazio para não travar o input
-        mensagem: '' 
-    });
-    
-    const [status, setStatus] = useState('');
+// Função para gerar uma nova pessoa (vida) vazia
+const criarNovaPessoa = (id) => ({
+    id: id,
+    idade: '',
+    preExistente: 'não',
+    doenca: '',
+});
 
+const Cotacao = () => {
+    // Estado Original (Detalhado) + Novos Campos (CNPJ/Status)
+    const [formData, setFormData] = useState({
+        nome: '',
+        email: '',
+        telefone: '',
+        tipo: 'PF', // Mudamos 'modalidade' para 'tipo' pra alinhar com o novo padrão
+        cnpj: '',   // CAMPO NOVO
+        cidade: '',
+        bairro: '',
+        numPessoas: 1, // Esse é o numero que aparece no input
+        idades: [criarNovaPessoa(1)], // Essa é a lista detalhada
+        mensagem: ''
+    });
+
+    const [statusEnvio, setStatusEnvio] = useState('');
+
+    // Atualiza campos simples
     const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    // --- CORREÇÃO DO BUG MOBILE "TRAVA NO 1" ---
+    const handlePessoasChange = (e) => {
+        const valorDigitado = e.target.value;
+
+        // 1. Se o usuário apagar tudo, permite ficar vazio (pra não travar)
+        if (valorDigitado === '') {
+            setFormData({ ...formData, numPessoas: '' });
+            return;
+        }
+
+        const novoNumero = parseInt(valorDigitado);
+        
+        // 2. Só atualiza a lista se for um número válido
+        if (!isNaN(novoNumero)) {
+            const idadesAtuais = formData.idades;
+            let novasIdades = [...idadesAtuais];
+
+            if (novoNumero > idadesAtuais.length) {
+                // Adiciona novas vidas
+                const qtdAdicionar = novoNumero - idadesAtuais.length;
+                for (let i = 0; i < qtdAdicionar; i++) {
+                    novasIdades.push(criarNovaPessoa(idadesAtuais.length + i + 1));
+                }
+            } else if (novoNumero < idadesAtuais.length && novoNumero > 0) {
+                // Remove as últimas vidas (mas nunca deixa zerado)
+                novasIdades = idadesAtuais.slice(0, novoNumero);
+            }
+
+            setFormData({ 
+                ...formData, 
+                numPessoas: novoNumero, 
+                idades: novasIdades 
+            });
+        }
+    };
+
+    // Atualiza os detalhes de cada vida (idade, doença)
+    const handlePessoaDetalheChange = (id, field, value) => {
+        const novasIdades = formData.idades.map(pessoa => 
+            pessoa.id === id ? { ...pessoa, [field]: value } : pessoa
+        );
+        setFormData({ ...formData, idades: novasIdades });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // Se vidas estiver vazio, assume 1, senão usa o número digitado
+        // Prepara os dados pro formato Híbrido do Server
         const dadosParaEnviar = {
-            ...form,
-            vidas: form.vidas === '' ? 1 : Number(form.vidas)
+            nome: formData.nome,
+            email: formData.email,
+            telefone: formData.telefone,
+            tipo: formData.tipo, // PF ou PJ
+            cnpj: formData.cnpj, // CNPJ se tiver
+            cidade: formData.cidade,
+            bairro: formData.bairro,
+            mensagem: formData.mensagem,
+            status: 'Novo', // Funil de vendas
+            
+            // Manda os dois formatos pra garantir:
+            vidas: formData.idades.length, // Número simples
+            vidas_detalhes: formData.idades.map(({id, ...rest}) => rest) // Detalhes (Idade/Doença)
         };
 
-        setStatus('Enviando...');
-        
+        setStatusEnvio('Enviando...');
+
         try {
-            // Envia para o Backend
-            const res = await fetch('/api/cotacoes', {
+            const response = await fetch('/api/cotacoes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dadosParaEnviar)
+                body: JSON.stringify(dadosParaEnviar),
             });
 
-            if (res.ok) {
-                const result = await res.json();
+            if (response.ok) {
+                const result = await response.json();
                 
-                // --- INTEGRAÇÃO WHATSAPP ---
-                const msgZap = `*NOVA SOLICITAÇÃO (ID: ${result.cotacaoId})*\n\n` +
-                               `👤 *Nome:* ${form.nome}\n` +
-                               `📞 *Tel:* ${form.telefone}\n` +
-                               `🏥 *Tipo:* ${form.tipo} ${form.cnpj ? `(CNPJ: ${form.cnpj})` : ''}\n` +
-                               `👥 *Vidas:* ${form.vidas}\n` +
-                               `💬 *Msg:* ${form.mensagem || 'Sem mensagem'}`;
-                
-                const linkZap = `https://api.whatsapp.com/send?phone=5521980867488&text=${encodeURIComponent(msgZap)}`;
-                
-                // Abre o WhatsApp e Limpa o formulário
-                window.open(linkZap, '_blank');
-                setStatus('✅ Recebemos sua solicitação! Redirecionando para o WhatsApp...');
-                setForm({ nome: '', telefone: '', email: '', tipo: 'PF', cnpj: '', vidas: '', mensagem: '' });
+                // Formata mensagem pro WhatsApp
+                let msgZap = `*NOVA COTAÇÃO (ID: ${result.cotacaoId})*\n\n` +
+                             `👤 ${formData.nome}\n📞 ${formData.telefone}\n` +
+                             `📍 ${formData.bairro} - ${formData.cidade}\n` +
+                             `🏥 Tipo: ${formData.tipo} ${formData.cnpj ? `(CNPJ: ${formData.cnpj})` : ''}\n\n` +
+                             `*--- VIDAS (${formData.idades.length}) ---*\n`;
+
+                formData.idades.forEach((p, i) => {
+                    msgZap += `Vida #${i+1}: ${p.idade} anos`;
+                    if(p.preExistente === 'sim') msgZap += ` ⚠️ (${p.doenca})`;
+                    msgZap += `\n`;
+                });
+
+                if(formData.mensagem) msgZap += `\n💬 Msg: ${formData.mensagem}`;
+
+                const whatsappURL = `https://api.whatsapp.com/send?phone=5521980867488&text=${encodeURIComponent(msgZap)}`;
+                window.open(whatsappURL, '_blank');
+
+                setStatusEnvio('✅ Enviado com sucesso! Abrindo WhatsApp...');
+                // Limpa form
+                setFormData({
+                    nome: '', email: '', telefone: '', tipo: 'PF', cnpj: '',
+                    cidade: '', bairro: '', numPessoas: 1, idades: [criarNovaPessoa(1)], mensagem: ''
+                });
             } else {
-                setStatus('❌ Erro ao enviar. Tente novamente.');
+                setStatusEnvio('❌ Erro ao enviar. Tente novamente.');
             }
         } catch (error) {
-            setStatus('❌ Erro de conexão.');
+            console.error(error);
+            setStatusEnvio('❌ Erro de conexão.');
         }
     };
 
     return (
         <div className="cotacao-wrapper">
             <div className="cotacao-card">
-                <h2>Solicite sua Cotação</h2>
-                <p>Preencha os dados abaixo para receber uma simulação personalizada.</p>
+                <h2>Solicite sua Cotação Detalhada</h2>
+                <p>Preencha os dados abaixo para uma simulação precisa.</p>
 
                 <form onSubmit={handleSubmit}>
+                    {/* DADOS DE CONTATO */}
                     <div className="input-group">
                         <label>Nome Completo *</label>
-                        <input 
-                            name="nome" 
-                            value={form.nome} 
-                            onChange={handleChange} 
-                            required 
-                            placeholder="Seu nome" 
-                            className="material-input-field"
-                        />
+                        <input name="nome" value={formData.nome} onChange={handleChange} required className="material-input-field" placeholder="Seu nome" />
                     </div>
 
                     <div className="row-2">
                         <div className="input-group">
-                            <label>Telefone / WhatsApp *</label>
-                            <input 
-                                name="telefone" 
-                                value={form.telefone} 
-                                onChange={handleChange} 
-                                required 
-                                placeholder="(21) 99999-9999" 
-                                className="material-input-field"
-                            />
+                            <label>Telefone / Zap *</label>
+                            <input name="telefone" value={formData.telefone} onChange={handleChange} required className="material-input-field" placeholder="(21) 99999-9999" />
                         </div>
                         <div className="input-group">
-                            <label>E-mail (Opcional)</label>
-                            <input 
-                                name="email" 
-                                value={form.email} 
-                                onChange={handleChange} 
-                                type="email" 
-                                placeholder="seu@email.com" 
-                                className="material-input-field"
-                            />
+                            <label>Email (Opcional)</label>
+                            <input name="email" value={formData.email} onChange={handleChange} type="email" className="material-input-field" placeholder="email@exemplo.com" />
                         </div>
                     </div>
 
+                    <div className="row-2">
+                        <div className="input-group">
+                            <label>Cidade</label>
+                            <input name="cidade" value={formData.cidade} onChange={handleChange} required className="material-input-field" />
+                        </div>
+                        <div className="input-group">
+                            <label>Bairro</label>
+                            <input name="bairro" value={formData.bairro} onChange={handleChange} required className="material-input-field" />
+                        </div>
+                    </div>
+
+                    {/* TIPO E CNPJ */}
                     <div className="row-2">
                         <div className="input-group">
                             <label>Tipo de Plano</label>
-                            <select 
-                                name="tipo" 
-                                value={form.tipo} 
-                                onChange={handleChange}
-                                className="material-input-field"
-                            >
+                            <select name="tipo" value={formData.tipo} onChange={handleChange} className="material-input-field">
                                 <option value="PF">Pessoa Física (CPF)</option>
                                 <option value="PJ">Empresarial (CNPJ)</option>
                             </select>
                         </div>
                         
-                        {/* Correção do Input de Vidas: Tipo Number Simples */}
+                        {/* O INPUT DE VIDAS QUE AGORA NÃO TRAVA MAIS */}
                         <div className="input-group">
-                            <label>Quantidade de Vidas *</label>
+                            <label>Quantas Vidas? *</label>
                             <input 
                                 type="number" 
-                                name="vidas" 
-                                value={form.vidas} 
-                                onChange={handleChange} 
+                                name="numPessoas" 
+                                value={formData.numPessoas} 
+                                onChange={handlePessoasChange} 
                                 required 
-                                min="1"
-                                placeholder="Ex: 2"
-                                inputMode="numeric" /* Melhora o teclado no celular */
+                                min="1" 
+                                max="30"
+                                inputMode="numeric"
                                 className="material-input-field"
                             />
                         </div>
                     </div>
 
-                    {/* Campo Condicional de CNPJ (Só aparece se for PJ) */}
-                    {form.tipo === 'PJ' && (
-                        <div className="input-group animate-fade-in" style={{marginTop: '15px'}}>
-                            <label>CNPJ (Opcional)</label>
-                            <input 
-                                name="cnpj" 
-                                value={form.cnpj} 
-                                onChange={handleChange} 
-                                placeholder="00.000.000/0000-00" 
-                                className="material-input-field"
-                            />
+                    {/* CAMPO CNPJ (Só aparece se for PJ) */}
+                    {formData.tipo === 'PJ' && (
+                        <div className="input-group animate-fade-in">
+                            <label>CNPJ da Empresa</label>
+                            <input name="cnpj" value={formData.cnpj} onChange={handleChange} className="material-input-field" placeholder="00.000.000/0000-00" />
                         </div>
                     )}
 
-                    <div className="input-group" style={{marginTop: '15px'}}>
-                        <label>Mensagem ou Dúvidas (Idades, Preferências, etc)</label>
-                        <textarea 
-                            name="mensagem" 
-                            value={form.mensagem} 
-                            onChange={handleChange} 
-                            placeholder="Ex: Tenho 30 anos e meu filho 5. Prefiro hospital na Barra..." 
-                            rows="4"
-                            className="material-input-field"
-                        ></textarea>
+                    <hr style={{margin: '30px 0', border: '0', borderTop: '1px solid #eee'}} />
+
+                    {/* LISTA DETALHADA DAS VIDAS (LOOP) */}
+                    <h3 style={{color: '#0056b3', marginBottom: '20px'}}>Detalhes das Vidas</h3>
+                    
+                    {formData.idades.map((pessoa, index) => (
+                        <div key={pessoa.id} className="pessoa-detalhe" style={{background: '#f9f9f9', padding: '15px', borderRadius: '10px', marginBottom: '15px', border: '1px dashed #ccc'}}>
+                            <h4 style={{margin: '0 0 10px 0', color: '#555'}}>Pessoa #{index + 1}</h4>
+                            
+                            <div className="row-2">
+                                <div className="input-group">
+                                    <label>Idade</label>
+                                    <input 
+                                        type="number" 
+                                        value={pessoa.idade} 
+                                        onChange={(e) => handlePessoaDetalheChange(pessoa.id, 'idade', e.target.value)}
+                                        required
+                                        className="material-input-field"
+                                        placeholder="Ex: 35"
+                                    />
+                                </div>
+                                
+                                <div className="input-group">
+                                    <label>Pré-existente?</label>
+                                    <select 
+                                        value={pessoa.preExistente} 
+                                        onChange={(e) => handlePessoaDetalheChange(pessoa.id, 'preExistente', e.target.value)}
+                                        className="material-input-field"
+                                    >
+                                        <option value="não">Não</option>
+                                        <option value="sim">Sim</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {pessoa.preExistente === 'sim' && (
+                                <div className="input-group animate-fade-in">
+                                    <label>Qual a doença/condição?</label>
+                                    <input 
+                                        value={pessoa.doenca} 
+                                        onChange={(e) => handlePessoaDetalheChange(pessoa.id, 'doenca', e.target.value)}
+                                        className="material-input-field"
+                                        placeholder="Ex: Diabetes, Hipertensão..."
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    ))}
+
+                    <div className="input-group">
+                        <label>Mensagem ou Dúvidas Adicionais</label>
+                        <textarea name="mensagem" value={formData.mensagem} onChange={handleChange} rows="3" className="material-input-field"></textarea>
                     </div>
 
-                    <button type="submit" className="btn-enviar">Solicitar Simulação Grátis</button>
+                    <button type="submit" className="btn-enviar">Solicitar Simulação</button>
+                    {statusEnvio && <p className="status-msg">{statusEnvio}</p>}
                 </form>
-                
-                {status && <p className="status-msg" style={{textAlign: 'center', marginTop: '15px', fontWeight: 'bold'}}>{status}</p>}
             </div>
         </div>
     );
