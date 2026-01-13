@@ -1,150 +1,178 @@
 /* ============================================== */
-/* ESTRUTURA PRINCIPAL                            */
+/* CONTAINER PRINCIPAL                            */
 /* ============================================== */
-.cotacao-container {
+.cotacao-wrapper {
     padding: 40px 20px;
-    max-width: 900px;
+    max-width: 800px; /* Largura ideal para leitura */
     margin: 0 auto;
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
 
-.cotacao-container h2 {
+/* O CARTÃO BRANCO DO FORMULÁRIO */
+.cotacao-card {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08); /* Sombra suave e moderna */
+    width: 100%;
+}
+
+.cotacao-card h2 {
     color: var(--color-blue-primary, #0056b3);
-    font-size: 2rem;
+    text-align: center;
+    font-size: 1.8rem;
     margin-bottom: 10px;
 }
 
-.cotacao-container p {
+.cotacao-card p {
+    text-align: center;
     color: #666;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
+    font-size: 0.95rem;
 }
 
-.cotacao-form {
+/* ============================================== */
+/* GRID E LAYOUT DOS CAMPOS                       */
+/* ============================================== */
+
+/* Grupo de Input (Label + Campo) */
+.input-group {
     display: flex;
     flex-direction: column;
-    gap: 30px;
-    padding: 30px;
-    border-radius: 15px;
-    background-color: #ffffff;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-}
-
-/* ============================================== */
-/* ESTILO NOVO: CAIXAS DE TEXTO (CORRIGIDO)       */
-/* ============================================== */
-
-/* O container que segura cada campo */
-.material-input-group {
-    position: relative;
     margin-bottom: 20px;
-    margin-top: 10px;
 }
 
-/* O CAMPO DE DIGITAÇÃO */
+/* Linha com 2 colunas (Para PC) */
+.row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Rótulos (Labels) */
+.input-group label {
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+/* ============================================== */
+/* ESTILO DOS INPUTS (MODERNO E LIMPO)            */
+/* ============================================== */
 .material-input-field {
     width: 100%;
-    height: 55px; /* Altura fixa para não achatar */
-    padding: 15px;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    background-color: #ffffff; /* Fundo BRANCO */
+    height: 50px; /* Altura confortável para o dedo */
+    padding: 10px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
     font-size: 1rem;
     color: #333;
-    outline: none;
+    background-color: #fdfdfd;
     transition: all 0.3s ease;
-    box-sizing: border-box; /* Importante para o padding não estourar */
+    box-sizing: border-box;
 }
 
-/* O RÓTULO (LABEL) FLUTUANTE */
-.material-input-label {
-    position: absolute;
-    left: 15px;
-    top: -10px; /* Sobe para ficar na linha da borda */
-    background-color: #ffffff; /* Fundo BRANCO para tapar a linha */
-    padding: 0 5px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #0056b3; /* Azul da marca */
-    z-index: 10; /* Garante que fique por cima da borda */
-    
-    /* O SEGREDO: Permite clicar através do label */
-    pointer-events: none; 
-}
-
-/* ESTADO DE FOCO (QUANDO CLICA) */
+/* Foco (Quando clica no campo) */
 .material-input-field:focus {
-    border-color: #0056b3;
+    border-color: var(--color-blue-primary, #0056b3);
+    background-color: #fff;
+    outline: none;
     box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1);
 }
 
-/* Ajuste específico para TEXTAREA (Campo grande) */
+/* Área de Texto (Textarea) */
 textarea.material-input-field {
-    height: auto; /* Altura automática */
+    height: auto;
     min-height: 120px;
-    padding-top: 20px;
+    padding-top: 15px;
     resize: vertical;
 }
 
+/* CORREÇÃO PARA NÚMEROS (VIDAS) */
+/* Esconde as setinhas nativas chatas que ficam pequenas no celular */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
 /* ============================================== */
-/* SEÇÕES DO FORMULÁRIO                           */
+/* BOTÃO DE ENVIAR                                */
 /* ============================================== */
-.form-section {
-    border: 1px solid #eee;
-    border-radius: 10px;
-    padding: 25px;
-    margin-bottom: 20px;
-    background-color: #f9f9f9; /* Fundo leve cinza só no container maior */
-}
-
-.form-section legend {
-    font-size: 1.2em;
-    font-weight: 700;
-    color: #0056b3;
-    padding: 0 10px;
-}
-
-/* CARD DE VIDAS */
-.pessoa-detalhe {
-    background-color: #fff;
-    border: 1px dashed #ccc;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-
-.pessoa-detalhe h4 {
-    color: #0056b3;
-    margin-top: 0;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-}
-
-/* BOTÃO DE ENVIAR */
-.submit-cotacao-btn {
-    background: linear-gradient(135deg, #0056b3, #00a86b);
+.btn-enviar {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #0056b3, #00a86b); /* Azul para Verde */
     color: white;
     border: none;
-    padding: 15px;
-    border-radius: 30px;
+    border-radius: 12px;
     font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
-    width: 100%;
-    margin-top: 20px;
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.submit-cotacao-btn:hover {
+.btn-enviar:hover {
     transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 20px rgba(0, 86, 179, 0.25);
+    background: linear-gradient(135deg, #004494, #008f58);
 }
 
-/* Responsividade */
-@media (max-width: 600px) {
-    .cotacao-container {
-        padding: 10px;
+/* Mensagem de Status */
+.status-msg {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    border: 1px solid #eee;
+}
+
+/* Animação Suave (Fade In) para o CNPJ aparecer */
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(-10px); 
     }
-    .cotacao-form {
-        padding: 15px;
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+/* ============================================== */
+/* RESPONSIVIDADE (CELULAR)                       */
+/* ============================================== */
+@media (max-width: 768px) {
+    .cotacao-wrapper {
+        padding: 20px 15px; /* Menos borda no celular */
+    }
+
+    .cotacao-card {
+        padding: 25px 20px; /* Card mais compacto */
+    }
+
+    .row-2 {
+        grid-template-columns: 1fr; /* Vira 1 coluna só */
+        gap: 0; /* Tira o gap lateral */
+    }
+
+    /* Correção CRÍTICA para iPhone: Evita zoom ao clicar */
+    .material-input-field {
+        font-size: 16px; 
+    }
+
+    .cotacao-card h2 {
+        font-size: 1.5rem;
     }
 }

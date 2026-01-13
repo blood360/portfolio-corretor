@@ -23,23 +23,43 @@ if (MONGODB_URI) {
 // SCHEMAS
 const defaultOpts = { timestamps: true };
 
+// 1. SCHEMA DE COTAÇÃO (ATUALIZADO E HÍBRIDO)
 const CotacaoSchema = new mongoose.Schema({
-    nome: String, email: String, telefone: String, modalidade: String,
-    cidade: String, bairro: String, numPessoas: Number,
+    // --- Campos Gerais ---
+    nome: String,
+    email: String,
+    telefone: String,
     data_envio: { type: Date, default: Date.now },
-    vidas: [{ idade: String, pre_existente: String, doenca: String }]
+
+    // --- Campos do Novo Formulário ---
+    tipo: String,        // 'PF' ou 'PJ'
+    cnpj: String,        // Opcional
+    vidas: Number,       // Quantidade (Número)
+    mensagem: String,    // Dúvidas
+    status: { type: String, default: 'Novo' }, // Funil de Vendas
+
+    // --- Campos Legados (Mantidos para histórico) ---
+    tipo_plano: String,
+    modalidade: String,
+    estado: String,
+    cidade: String,
+    bairro: String,
+    numPessoas: Number,
+    // O antigo array de detalhes (caso precise acessar dados velhos)
+    vidas_detalhes: [{idade: String, pre_existente: String, doenca: String}]
 }, defaultOpts);
 const Cotacao = mongoose.model('Cotacao', CotacaoSchema);
 
+// 2. SCHEMA DE ATUALIZAÇÕES (NOTÍCIAS)
 const AtualizacaoSchema = new mongoose.Schema({
     titulo: String,
     descricao: String,
-    imagem: String, // Agora vai guardar o Base64 gigante
+    imagem: String,
     data_publicacao: { type: Date, default: Date.now },
 }, defaultOpts);
 const Atualizacao = mongoose.model('Atualizacao', AtualizacaoSchema);
 
-// NOVO SCHEMA PARA ADMINISTRADORAS
+// 3. SCHEMA PARA ADMINISTRADORAS
 const AdministradoraSchema = new mongoose.Schema({
     nome: String,
     descricao: String,
@@ -48,28 +68,32 @@ const AdministradoraSchema = new mongoose.Schema({
 }, defaultOpts);
 const Administradora = mongoose.model('Administradora', AdministradoraSchema);
 
-//-- DEPOIMENTOS DOS CLIENTES --
+// 4. DEPOIMENTOS DOS CLIENTES
 const DepoimentoSchema = new mongoose.Schema({
     nome: String,
     local: String,
     texto: String,
     estrelas: Number,
-    aprovado: { type: Boolean, default: false } // <--- NOVIDADE: Nasce falso (pendente)
+    aprovado: { type: Boolean, default: false } // Nasce falso (pendente)
 }, defaultOpts);
 const Depoimento = mongoose.model('Depoimento', DepoimentoSchema);
 
-// ROTAS API
 
-// --- Cotações ---
+// --- ROTAS API ---
+
+// --- COTAÇÕES ---
+
+// POST (Cliente envia - Atualizado para aceitar o body direto)
 app.post('/api/cotacoes', async (req, res) => {
     try {
-        const { idades, ...resto } = req.body;
-        const nova = new Cotacao({ ...resto, vidas: idades });
+        // O formulário novo já manda a estrutura certa, não precisa desestruturar 'idades'
+        const nova = new Cotacao(req.body);
         const salvo = await nova.save();
         res.status(201).json({ message: 'Salvo', cotacaoId: salvo._id });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// GET (Admin vê tudo)
 app.get('/api/cotacoes', async (req, res) => {
     try {
         const lista = await Cotacao.find().sort({ data_envio: -1 });
@@ -77,12 +101,23 @@ app.get('/api/cotacoes', async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// PUT STATUS (NOVO - Para o Admin mudar o funil)
+app.put('/api/cotacoes/:id/status', async (req, res) => {
+    try {
+        const { status } = req.body;
+        await Cotacao.findByIdAndUpdate(req.params.id, { status });
+        res.json({ message: 'Status atualizado' });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// DELETE
 app.delete('/api/cotacoes/:id', async (req, res) => {
     try { await Cotacao.findByIdAndDelete(req.params.id); res.json({ msg: 'OK' }); } 
     catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// --- Atualizações ---
+
+// --- ATUALIZAÇÕES (NOTÍCIAS) ---
 app.get('/api/atualizacoes', async (req, res) => {
     try {
         const lista = await Atualizacao.find().sort({ data_publicacao: -1 });
@@ -108,7 +143,8 @@ app.put('/api/atualizacoes/:id', async (req, res) => {
     catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// --- Administradoras ---
+
+// --- ADMINISTRADORAS ---
 app.get('/api/administradoras', async (req, res) => {
     try {
         const lista = await Administradora.find();
@@ -129,13 +165,17 @@ app.delete('/api/administradoras/:id', async (req, res) => {
     catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// -- ROTA PARA DEPOIMENTOS --
+
+// --- DEPOIMENTOS ---
+
+// ROTA PÚBLICA (Home): Só traz os aprovados!
 app.get('/api/depoimentos/publicos', async (req, res) => {
     try {
         const lista = await Depoimento.find({ aprovado: true }).sort({ createdAt: -1 }).limit(6);
         res.json(lista.map(i => ({ ...i._doc, id: i._id })));
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
+
 // ROTA ADMIN (Painel): Traz tudo (aprovados e pendentes)
 app.get('/api/depoimentos/todos', async (req, res) => {
     try {
@@ -143,6 +183,7 @@ app.get('/api/depoimentos/todos', async (req, res) => {
         res.json(lista.map(i => ({ ...i._doc, id: i._id })));
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
+
 // ROTA POST (Cliente envia): Salva como pendente
 app.post('/api/depoimentos', async (req, res) => {
     try {
@@ -151,6 +192,7 @@ app.post('/api/depoimentos', async (req, res) => {
         res.status(201).json({ message: 'Recebido para moderação' });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
+
 // ROTA PUT (Admin Aprova): Muda para aprovado = true
 app.put('/api/depoimentos/:id/aprovar', async (req, res) => {
     try {
@@ -165,9 +207,12 @@ app.delete('/api/depoimentos/:id', async (req, res) => {
     catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// SERVIR FRONTEND
+
+// SERVIR FRONTEND (PRODUÇÃO)
 const FRONTEND_DIR = path.join(__dirname, '..', 'frontend', 'dist');
 app.use(express.static(FRONTEND_DIR));
+
+// Qualquer rota que não seja /api manda pro React (SPA)
 app.get('/*', (req, res) => {
     if (!req.path.startsWith('/api')) res.sendFile(path.join(FRONTEND_DIR, 'index.html'));
     else res.status(404).json({ error: 'API não encontrada' });

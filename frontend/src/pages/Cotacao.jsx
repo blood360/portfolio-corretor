@@ -1,331 +1,176 @@
 import React, { useState } from 'react';
 import '../styles/Cotacao.css';
 
-// ===============================================
-// FUNÇÃO AUXILIAR: Formata os dados para a URL do WhatsApp
-// ===============================================
-const formatarDadosParaWhatsApp = (data) => {
-    let mensagem = `*🚨 NOVA SOLICITAÇÃO DE COTAÇÃO - CORRETOR ADRIANO SANTOS 🚨*\n\n`;
-    
-    mensagem += `*DADOS DO SOLICITANTE:*\n`;
-    mensagem += `Nome: ${data.nome}\n`;
-    mensagem += `Telefone: ${data.telefone}\n`;
-    mensagem += `Email: ${data.email}\n`;
-    mensagem += `Modalidade: ${(data.modalidade || 'N/A').toUpperCase()}\n`;
-    mensagem += `Local: ${data.bairro} - ${data.cidade}\n`;
-    mensagem += `---\n\n`;
-
-    mensagem += `*DADOS DAS ${data.numPessoas} VIDAS:*\n`;
-    
-    data.idades.forEach((pessoa, index) => {
-        mensagem += `Pessoa #${index + 1}:\n`;
-        mensagem += `  - Idade: ${pessoa.idade || 'Não informada'}\n`;
-        
-        if (pessoa.preExistente === 'sim' && pessoa.doenca) {
-            mensagem += `  - *PRÉ-EXISTENTE:* SIM! (${pessoa.doenca})\n`;
-        } else {
-            mensagem += `  - Pré-existente: Não\n`;
-        }
-    });
-
-    mensagem += `\n---\n_Cotação salva no sistema com sucesso._`;
-
-    return mensagem;
-};
-
-// Função para gerar um objeto de pessoa vazia
-const criarNovaPessoa = (id) => ({
-    id: id,
-    idade: '',
-    preExistente: 'não',
-    doenca: '',
-});
-
 const Cotacao = () => {
-  // Estado para guardar os dados do formulário
-  const [formData, setFormData] = useState({
-    nome: '',
-    email: '',
-    telefone: '',
-    modalidade: 'pf',
-    bairro: '',
-    cidade: '',
-    numPessoas: 1,
-    idades: [criarNovaPessoa(1)], 
-  });
+    // Estado simplificado para capturar Lead Rápido
+    const [form, setForm] = useState({ 
+        nome: '', 
+        telefone: '', 
+        email: '', 
+        tipo: 'PF', // PF ou PJ
+        cnpj: '',   // Novo campo
+        vidas: '',  // Começa vazio para não travar o input
+        mensagem: '' 
+    });
+    
+    const [status, setStatus] = useState('');
 
-  // Função genérica pra atualizar os campos simples
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  // Função pra adicionar ou remover pessoas do plano (Vidas)
-  const handlePessoasChange = (e) => {
-    const novoNumPessoas = parseInt(e.target.value);
-    const pessoasValidas = Math.max(1, novoNumPessoas || 1); 
-    const idadesAtuais = formData.idades;
-
-    if (pessoasValidas > idadesAtuais.length) {
-      const novasPessoas = Array.from({ length: pessoasValidas - idadesAtuais.length }, (_, i) => 
-        criarNovaPessoa(idadesAtuais.length + i + 1)
-      );
-      setFormData({ 
-        ...formData, 
-        numPessoas: pessoasValidas, 
-        idades: [...idadesAtuais, ...novasPessoas] 
-      });
-    } else if (pessoasValidas < idadesAtuais.length) {
-      const novasIdades = idadesAtuais.slice(0, pessoasValidas);
-      setFormData({ 
-        ...formData, 
-        numPessoas: pessoasValidas, 
-        idades: novasIdades 
-      });
-    } else {
-      setFormData({ ...formData, numPessoas: pessoasValidas });
-    }
-  };
-
-  const handlePessoaDetalheChange = (id, field, value) => {
-    const novasIdades = formData.idades.map(pessoa => 
-      pessoa.id === id ? { ...pessoa, [field]: value } : pessoa
-    );
-    setFormData({ ...formData, idades: novasIdades });
-  };
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const API_URL = '/api/cotacoes';
-
-    const dadosParaEnviar = {
-      nome: formData.nome,
-      email: formData.email,
-      telefone: formData.telefone,
-      modalidade: formData.modalidade,
-      cidade: formData.cidade,
-      bairro: formData.bairro,
-      numPessoas: formData.numPessoas,
-      idades: formData.idades.map(({id, ...rest}) => rest),
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    try {
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json', 
-        },
-        body: JSON.stringify(dadosParaEnviar),
-      });
-
-      if (response.ok) {
-        const result = await response.json();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         
-        const dadosFormatados = formatarDadosParaWhatsApp(formData);
-        const SEU_NUMERO_WHATSAPP = '5521980867488'; 
-        const mensagemCodificada = encodeURIComponent(dadosFormatados);
-        const whatsappURL = `https://api.whatsapp.com/send?phone=${SEU_NUMERO_WHATSAPP}&text=${mensagemCodificada}`;
+        // Se vidas estiver vazio, assume 1, senão usa o número digitado
+        const dadosParaEnviar = {
+            ...form,
+            vidas: form.vidas === '' ? 1 : Number(form.vidas)
+        };
 
-        window.open(whatsappURL, '_blank'); 
-
-        alert(`Sua solicitação (ID: ${result.cotacaoId}) foi salva! Você será redirecionado para o WhatsApp!`);
-
-        setFormData({
-          nome: '',
-          email: '',
-          telefone: '',
-          modalidade: 'pf',
-          bairro: '',
-          cidade: '',
-          numPessoas: 1,
-          idades: [criarNovaPessoa(1)],
-        });
-      } else {
-        const errorData = await response.json();
-        alert(`Erro ao enviar: ${errorData.error || 'Erro desconhecido'}.`);
-      }
-    } catch (error) {
-      console.error('erro de rede ao enviar cotação:', error);
-      alert('Verifique se o servidor está funcionando ou com problema de rede.');
-    }
-  };
-
-  return (
-    <div className="cotacao-container">
-      <h2>✍️ Solicitar Cotação Personalizada</h2>
-      <p>
-        Me passe as informações que eu calculo o melhor plano pra você! 
-      </p>
-
-      <form onSubmit={handleSubmit} className="cotacao-form">
+        setStatus('Enviando...');
         
-        {/* === Dados Pessoais do Solicitante === */}
-        <fieldset className="form-section">
-            <legend>Seus Dados</legend>
-            
-            {/* NOME */}
-            <div className="material-input-group">
-                <input 
-                    type="text" 
-                    name="nome" 
-                    className="material-input-field" 
-                    value={formData.nome} 
-                    onChange={handleChange} 
-                    placeholder="Ex: João Silva" 
-                    required 
-                />
-                <label className="material-input-label">Nome Completo</label>
-            </div>
-            
-            {/* EMAIL */}
-            <div className="material-input-group">
-                <input 
-                    type="email" 
-                    name="email" 
-                    className="material-input-field" 
-                    value={formData.email} 
-                    onChange={handleChange} 
-                    placeholder="exemplo@email.com" 
-                    required 
-                />
-                <label className="material-input-label">E-mail</label>
-            </div>
-            
-            {/* TELEFONE */}
-            <div className="material-input-group">
-                <input 
-                    type="tel" 
-                    name="telefone" 
-                    className="material-input-field" 
-                    value={formData.telefone} 
-                    onChange={handleChange} 
-                    placeholder="(XX) 9XXXX-XXXX" 
-                    required 
-                />
-                <label className="material-input-label">Telefone/WhatsApp</label>
-            </div>
-        </fieldset>
+        try {
+            // Envia para o Backend
+            const res = await fetch('/api/cotacoes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dadosParaEnviar)
+            });
 
-        {/* === Modalidade e Localização === */}
-        <fieldset className="form-section">
-            <legend>Detalhes da Cotação</legend>
-            
-            {/* MODALIDADE (SELECT) */}
-            <div className="material-input-group">
-                <select 
-                    name="modalidade" 
-                    className="material-input-field" 
-                    value={formData.modalidade} 
-                    onChange={handleChange} 
-                    required
-                >
-                    <option value="pf">Pessoa Física (PF)</option>
-                    <option value="cnpj">Pessoa Jurídica (CNPJ)</option>
-                </select>
-                <label className="material-input-label">Modalidade do Plano</label>
-            </div>
-            
-            {/* CIDADE */}
-            <div className="material-input-group">
-                <input 
-                    type="text" 
-                    name="cidade" 
-                    className="material-input-field" 
-                    value={formData.cidade} 
-                    onChange={handleChange} 
-                    placeholder="Sua Cidade" 
-                    required 
-                />
-                <label className="material-input-label">Cidade</label>
-            </div>
-
-            {/* BAIRRO */}
-            <div className="material-input-group">
-                <input 
-                    type="text" 
-                    name="bairro" 
-                    className="material-input-field" 
-                    value={formData.bairro} 
-                    onChange={handleChange} 
-                    placeholder="Seu Bairro" 
-                    required 
-                />
-                <label className="material-input-label">Bairro</label>
-            </div>
-
-            {/* NUMERO DE PESSOAS */}
-            <div className="material-input-group">
-                <input 
-                    type="number" 
-                    name="numPessoas" 
-                    className="material-input-field" 
-                    min="1" 
-                    max="20"
-                    value={formData.numPessoas} 
-                    onChange={handlePessoasChange} 
-                    required 
-                />
-                <label className="material-input-label">Quantas Vidas?</label>
-            </div>
-        </fieldset>
-
-        {/* === Dados de Idade e Saúde por Pessoa === */}
-        <fieldset className="form-section">
-            <legend>Idade e Saúde dos {formData.numPessoas} Beneficiários</legend>
-            
-            {formData.idades.map((pessoa, index) => (
-              <div key={pessoa.id} className="pessoa-detalhe">
-                <h4>Pessoa #{index + 1}</h4>
+            if (res.ok) {
+                const result = await res.json();
                 
-                {/* IDADE */}
-                <div className="material-input-group">
-                    <input 
-                        type="number" 
-                        className="material-input-field"
-                        min="0"
-                        max="99"
-                        value={pessoa.idade} 
-                        onChange={(e) => handlePessoaDetalheChange(pessoa.id, 'idade', e.target.value)}
-                        required
-                    />
-                    <label className="material-input-label">Idade</label>
-                </div>
+                // --- INTEGRAÇÃO WHATSAPP ---
+                const msgZap = `*NOVA SOLICITAÇÃO (ID: ${result.cotacaoId})*\n\n` +
+                               `👤 *Nome:* ${form.nome}\n` +
+                               `📞 *Tel:* ${form.telefone}\n` +
+                               `🏥 *Tipo:* ${form.tipo} ${form.cnpj ? `(CNPJ: ${form.cnpj})` : ''}\n` +
+                               `👥 *Vidas:* ${form.vidas}\n` +
+                               `💬 *Msg:* ${form.mensagem || 'Sem mensagem'}`;
+                
+                const linkZap = `https://api.whatsapp.com/send?phone=5521980867488&text=${encodeURIComponent(msgZap)}`;
+                
+                // Abre o WhatsApp e Limpa o formulário
+                window.open(linkZap, '_blank');
+                setStatus('✅ Recebemos sua solicitação! Redirecionando para o WhatsApp...');
+                setForm({ nome: '', telefone: '', email: '', tipo: 'PF', cnpj: '', vidas: '', mensagem: '' });
+            } else {
+                setStatus('❌ Erro ao enviar. Tente novamente.');
+            }
+        } catch (error) {
+            setStatus('❌ Erro de conexão.');
+        }
+    };
 
-                {/* DOENÇA PRE EXISTENTE (SELECT) */}
-                <div className="material-input-group">
-                    <select 
-                        className="material-input-field"
-                        value={pessoa.preExistente} 
-                        onChange={(e) => handlePessoaDetalheChange(pessoa.id, 'preExistente', e.target.value)}
-                    >
-                        <option value="não">Não</option>
-                        <option value="sim">Sim</option>
-                    </select>
-                    <label className="material-input-label">Tem doença pré-existente?</label>
-                </div>
+    return (
+        <div className="cotacao-wrapper">
+            <div className="cotacao-card">
+                <h2>Solicite sua Cotação</h2>
+                <p>Preencha os dados abaixo para receber uma simulação personalizada.</p>
 
-                {/* DETALHE DA DOENÇA (TEXTAREA) */}
-                {pessoa.preExistente === 'sim' && (
-                    <div className="material-input-group">
-                        <textarea 
+                <form onSubmit={handleSubmit}>
+                    <div className="input-group">
+                        <label>Nome Completo *</label>
+                        <input 
+                            name="nome" 
+                            value={form.nome} 
+                            onChange={handleChange} 
+                            required 
+                            placeholder="Seu nome" 
                             className="material-input-field"
-                            value={pessoa.doenca} 
-                            onChange={(e) => handlePessoaDetalheChange(pessoa.id, 'doenca', e.target.value)}
-                            required={pessoa.preExistente === 'sim'}
-                            placeholder="Ex: Diabetes tipo 2, hipertensão..."
                         />
-                        <label className="material-input-label doenca-label">Qual a doença/lesão?</label>
                     </div>
-                )}
-              </div>
-            ))}
-        </fieldset>
-        
-        <button type="submit" className="submit-cotacao-btn">
-          Mandar Cotação pro Corretor!
-        </button>
-      </form>
-    </div>
-  );
+
+                    <div className="row-2">
+                        <div className="input-group">
+                            <label>Telefone / WhatsApp *</label>
+                            <input 
+                                name="telefone" 
+                                value={form.telefone} 
+                                onChange={handleChange} 
+                                required 
+                                placeholder="(21) 99999-9999" 
+                                className="material-input-field"
+                            />
+                        </div>
+                        <div className="input-group">
+                            <label>E-mail (Opcional)</label>
+                            <input 
+                                name="email" 
+                                value={form.email} 
+                                onChange={handleChange} 
+                                type="email" 
+                                placeholder="seu@email.com" 
+                                className="material-input-field"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="row-2">
+                        <div className="input-group">
+                            <label>Tipo de Plano</label>
+                            <select 
+                                name="tipo" 
+                                value={form.tipo} 
+                                onChange={handleChange}
+                                className="material-input-field"
+                            >
+                                <option value="PF">Pessoa Física (CPF)</option>
+                                <option value="PJ">Empresarial (CNPJ)</option>
+                            </select>
+                        </div>
+                        
+                        {/* Correção do Input de Vidas: Tipo Number Simples */}
+                        <div className="input-group">
+                            <label>Quantidade de Vidas *</label>
+                            <input 
+                                type="number" 
+                                name="vidas" 
+                                value={form.vidas} 
+                                onChange={handleChange} 
+                                required 
+                                min="1"
+                                placeholder="Ex: 2"
+                                inputMode="numeric" /* Melhora o teclado no celular */
+                                className="material-input-field"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Campo Condicional de CNPJ (Só aparece se for PJ) */}
+                    {form.tipo === 'PJ' && (
+                        <div className="input-group animate-fade-in" style={{marginTop: '15px'}}>
+                            <label>CNPJ (Opcional)</label>
+                            <input 
+                                name="cnpj" 
+                                value={form.cnpj} 
+                                onChange={handleChange} 
+                                placeholder="00.000.000/0000-00" 
+                                className="material-input-field"
+                            />
+                        </div>
+                    )}
+
+                    <div className="input-group" style={{marginTop: '15px'}}>
+                        <label>Mensagem ou Dúvidas (Idades, Preferências, etc)</label>
+                        <textarea 
+                            name="mensagem" 
+                            value={form.mensagem} 
+                            onChange={handleChange} 
+                            placeholder="Ex: Tenho 30 anos e meu filho 5. Prefiro hospital na Barra..." 
+                            rows="4"
+                            className="material-input-field"
+                        ></textarea>
+                    </div>
+
+                    <button type="submit" className="btn-enviar">Solicitar Simulação Grátis</button>
+                </form>
+                
+                {status && <p className="status-msg" style={{textAlign: 'center', marginTop: '15px', fontWeight: 'bold'}}>{status}</p>}
+            </div>
+        </div>
+    );
 };
 
 export default Cotacao;
